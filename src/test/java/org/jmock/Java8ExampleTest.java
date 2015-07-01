@@ -31,23 +31,8 @@ public class Java8ExampleTest {
     }
 
 
-    @Test public void test() throws IOException {
-        mockery.checking(new Expectations8() {{
-            allowing(service).add(1, 2);
-            will(() -> 3);
-
-            allowing(service).add(1, 3);
-            will(() -> {throw new IOException();});
-
-            exactly(2).of(service).add(1, 2);
-
-            allowing(service).add(1, 3);
-            will(throwException(new IOException()));
-
-            allowing(service).add(with(1), with(3));
-            will((Integer p1, Integer p2) -> p1 + p2);
-        }});
-
+    @Test public void methodReference_syntax() {
+        // I think I can make this work - it compiles but isn't wired up correctly
         mockery.allowing(service::add).with(1, 2).will(() -> 3);
         mockery.allowing(service::add).with(equalTo(1), equalTo(2)).will(() -> 3);
         mockery.allowing(service::add).with(any(Integer.class), any(Integer.class)).will((p1, p2) -> p1 + p1);
@@ -62,7 +47,22 @@ public class Java8ExampleTest {
 
         mockery.allowing((IIIIOException) service::thing).with(1, 2).will((p1, p2) -> p1 + p2);
         mockery.allowing((IIIIIOException) service::thing).with(1, 2, 3).will((p1, p2, p3) -> p1 + p2 + p3);
+    }
 
+    @Test public void expectations_extension() throws IOException {
+        // Not typesafe or parameter number safe, but a quick win
+        mockery.checking(new Expectations8() {{
+            allowing(service).add(1, 2);
+            __will(() -> 3);
+
+            allowing(service).add(1, 3);
+            __will(() -> {
+                throw new IOException();
+            });
+
+            allowing(service).add(with(1), with(3));
+            __will((Integer p1, Integer p2) -> p1 + p2);
+        }});
     }
 
     private interface IIIIOException extends Function2<Integer, Integer, Integer, IOException> {}
@@ -242,14 +242,14 @@ public class Java8ExampleTest {
     }
 
     private class Expectations8 extends Expectations {
-        public <R, X extends Throwable> void will(FallibleSupplier<R, X> supplier) {
+        public <R, X extends Throwable> void __will(FallibleSupplier<R, X> supplier) {
             will(new SupplierAction<>(supplier));
         }
 
-        public <P1, P2, R, X extends Throwable> void will(Function2<P1, P2, R, X> f) {
+        public <P1, P2, R, X extends Throwable> void __will(Function2<P1, P2, R, X> f) {
             will(new Function2Action<>(f));
         }
-        public <P1, P2, P3, R, X extends Throwable> void will(Function3<P1, P2, P3, R, X> f) {
+        public <P1, P2, P3, R, X extends Throwable> void __will(Function3<P1, P2, P3, R, X> f) {
             will(new Function3Action<>(f));
         }
     }
