@@ -8,6 +8,8 @@ import org.jmock.internal.ParametersMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -23,6 +25,7 @@ public class Java8Test {
     public static interface Service {
         public String stringify(Object o);
         public String stringify2(Object o);
+        public int write(Object o) throws IOException;
     }
 
     @Test
@@ -87,6 +90,32 @@ public class Java8Test {
 
         assertEquals("42", service.stringify(42));
         assertEquals("54", service.stringify(54));
+    }
+
+    @Test
+    public void allows_checked_throws() {
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::write).with(anyParameters()).will(() -> {throw new IOException("whoops");});
+        }});
+        try {
+            service.write(54);
+            fail();
+        } catch (IOException e) {
+            assertThat(e.toString(), containsString("whoops"));
+        }
+    }
+
+    @Test
+    public void allows_unchecked_throws() {
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::stringify).with(anyParameters()).will(() -> {throw new RuntimeException("whoops");});
+        }});
+        try {
+            service.stringify(54);
+            fail();
+        } catch (RuntimeException e) {
+            assertThat(e.toString(), containsString("whoops"));
+        }
     }
 
     private ParametersMatcher anyParameters() {
