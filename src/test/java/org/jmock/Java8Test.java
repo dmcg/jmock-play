@@ -3,8 +3,10 @@ package org.jmock;
 import org.hamcrest.core.IsAnything;
 import org.jmock.api.ExpectationError;
 import org.jmock.function.Expec8ions;
+import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ParametersMatcher;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,8 +17,9 @@ import static org.junit.Assert.fail;
 
 public class Java8Test {
 
-    Mockery mockery = new Mockery();
-    Service service = mockery.mock(Service.class);
+    @Rule public final JUnitRuleMockery mockery = new JUnitRuleMockery();
+
+    private final Service service = mockery.mock(Service.class);
 
     public static interface Service {
         public String stringify(Object o);
@@ -32,11 +35,14 @@ public class Java8Test {
 
     @Test
     public void doesnt_match_non_matching_parameters() {
-        mockery.checking(new Expec8ions() {{
-            allowing(calling(service)::stringify).with(42).will(() -> "42");
+        // JUnitRuleMockery will fail in tearDown
+        Mockery localMockery = new Mockery();
+        Service localService = localMockery.mock(Service.class);
+        localMockery.checking(new Expec8ions() {{
+            allowing(calling(localService)::stringify).with(42).will(() -> "42");
         }});
         try {
-            service.stringify(54);
+            localService.stringify(54);
             fail();
         } catch (ExpectationError e) {
             assertThat(e.toString(), containsString("54"));
