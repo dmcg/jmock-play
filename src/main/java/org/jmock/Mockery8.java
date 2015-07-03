@@ -19,7 +19,16 @@ import java.util.List;
 import static org.hamcrest.Matchers.equalTo;
 
 public class Mockery8 extends Mockery {
+    private static ThreadLocal<InvocationExpectationBuilder> invocationExpectationBuilderThreadLocal = new ThreadLocal<>();
+
     private List<CaptureControl> mocks = new ArrayList<>();
+
+    public static <T> T callOf(T mock) {
+
+        InvocationExpectationBuilder invocationExpectationBuilder = new InvocationExpectationBuilder();
+        invocationExpectationBuilderThreadLocal.set(invocationExpectationBuilder);
+        return invocationExpectationBuilder.of(mock);
+    }
 
     @Override
     public <T> T mock(Class<T> typeToMock) {
@@ -37,31 +46,13 @@ public class Mockery8 extends Mockery {
     }
 
     public class MethodCapture1<P1, R, X extends Throwable> {
-        private final Function1<P1, R, X> function;
-        private final InvocationExpectation expectation = new InvocationExpectation();
-
         public MethodCapture1(Function1<P1, R, X> function, Cardinality cardinality) {
-            this.function = function;
-            expectation.setCardinality(cardinality);
-            expectation.setMethodMatcher(equalTo(methodFor(function)));
-            expectation.setMethodMatcher(anyMethod());
-            Mockery8.this.addExpectation(expectation);
-        }
-
-        private Method methodFor(Function1<P1, R, X> function) {
-            checking(new Expectations() {
-                {
-                    mocks.forEach(c -> {
-                        InvocationExpectationBuilder thing = new InvocationExpectationBuilder();
-                        thing.of(c);
-                        try {
-                            function.apply(null);
-                        } catch (Throwable ignored) {
-                            System.out.println("DMCG: " + ignored);
-                        }
-                    });
-                }});
-            return null;
+            invocationExpectationBuilderThreadLocal.get().setCardinality(cardinality);
+            try {
+                function.apply(null);
+            } catch (Throwable ignored) {
+                System.out.println("DMCG: " + ignored);
+            }
         }
 
         public Will with(P1 p1) {
@@ -69,7 +60,7 @@ public class Mockery8 extends Mockery {
         }
 
         public Will with(ParametersMatcher parametersMatcher) {
-            expectation.setParametersMatcher(parametersMatcher);
+            invocationExpectationBuilderThreadLocal.get().addParameterMatcher(parametersMatcher);
             return new Will();
         }
 
@@ -80,7 +71,7 @@ public class Mockery8 extends Mockery {
             }
 
             public void will(Action action) {
-                expectation.setAction(action);
+                invocationExpectationBuilderThreadLocal.get().setAction(action);
             }
 
             public void will(Function1<P1, R, X> f) {
