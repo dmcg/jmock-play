@@ -38,7 +38,7 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
     }
 
     protected W withMatchingParameters(Predicate...  predicates) {
-        Stream<PredicateMatcher<Object>> predicateMatcherStream = Arrays.stream(predicates).map(PredicateMatcher::new);
+        Stream<PredicateMatcher<Object>> predicateMatcherStream = Arrays.stream(predicates).map(p -> new PredicateMatcher<>(p));
         return withMatchingParameters(predicateMatcherStream.toArray(PredicateMatcher[]::new));
     }
 
