@@ -13,19 +13,9 @@ public class Expec8ions extends Expectations {
 
     private InvocationExpectationBuilder myCopyOfCurrentBuilder = null;
 
-    public <T> T calling(T mock) {
-        myCopyOfCurrentBuilder = (InvocationExpectationBuilder) exactly(1); // will be changed later, but gives us access to currentBuilder
+    public <T> T callTo(T mock) {
+        myCopyOfCurrentBuilder = (InvocationExpectationBuilder) exactly(1); // cardinality will be changed later, but this gives us access to currentBuilder
         return myCopyOfCurrentBuilder.of(mock);
-    }
-
-    public void buildExpectations(Action defaultAction, ExpectationCollector collector) {
-        for (InvocationExpectationBuilder builder : Expec8ions.<List<InvocationExpectationBuilder>>valueOfField(super.getClass().getSuperclass().getSuperclass(), this, "builders")) {
-            List<Matcher<?>> capturedParameterMatchers = Expec8ions.<List<Matcher<?>>>valueOfField(builder.getClass(), builder, "capturedParameterMatchers");
-            if (!capturedParameterMatchers.isEmpty()) {
-                ((InvocationExpectation) builder.toExpectation(defaultAction)).setParametersMatcher((ParametersMatcher) capturedParameterMatchers.get(0));
-            }
-        }
-        super.buildExpectations(defaultAction, collector);
     }
 
     public <P1, R, X extends Throwable> MethodCapture1<P1, R, X> allowing(Function1<P1, R, X> method) {
@@ -42,7 +32,6 @@ public class Expec8ions extends Expectations {
             try {
                 function.apply(null); // captured by currentBuilder
             } catch (Throwable ignored) {
-                System.out.println("DMCG: " + ignored);
             }
         }
 
@@ -54,7 +43,6 @@ public class Expec8ions extends Expectations {
             myCopyOfCurrentBuilder.addParameterMatcher(parametersMatcher);
             return new Will();
         }
-
 
         public class Will {
             public void will(FallibleSupplier<R, X> supplier) {
@@ -71,13 +59,44 @@ public class Expec8ions extends Expectations {
         }
     }
 
+    /* HERE BE DRAGONS */
+
+    public void buildExpectations(Action defaultAction, ExpectationCollector collector) {
+        for (InvocationExpectationBuilder builder : builders()) {
+            List<Matcher<?>> capturedParameterMatchers = capturedParameterMatchersFrom(builder);
+            if (!capturedParameterMatchers.isEmpty()) {
+                ((InvocationExpectation) builder.toExpectation(defaultAction)).setParametersMatcher((ParametersMatcher) capturedParameterMatchers.get(0));
+            }
+        }
+        super.buildExpectations(defaultAction, collector);
+    }
+
     @SuppressWarnings("unchecked")
-    private static <T> T valueOfField(Class<?> type, Object o, String name) {
+    private List<Matcher<?>> capturedParameterMatchersFrom(InvocationExpectationBuilder builder) {
+        return Expec8ions.valueOfField(builder, "capturedParameterMatchers", List.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<InvocationExpectationBuilder> builders() {
+        return Expec8ions.valueOfField(this, "builders", List.class);
+    }
+
+    private static <T> T valueOfField(Object o, String name, Class<T> fieldType) {
+        return valueOfField(o.getClass(), o, name, fieldType);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T valueOfField(Class<?> type, Object o, String name, Class<T> fieldType) {
         try {
             Field declaredField = type.getDeclaredField(name);
             declaredField.setAccessible(true);
             return (T) declaredField.get(o);
-        } catch (Exception e) {
+        } catch (NoSuchFieldException e) {
+            Class<?> superclass = type.getSuperclass();
+            if (superclass == null)
+                throw new RuntimeException("Can't find field named " + name);
+            return valueOfField(superclass, o, name, fieldType);
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

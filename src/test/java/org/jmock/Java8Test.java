@@ -5,7 +5,6 @@ import org.jmock.api.ExpectationError;
 import org.jmock.function.Expec8ions;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ParametersMatcher;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -23,12 +22,13 @@ public class Java8Test {
 
     public static interface Service {
         public String stringify(Object o);
+        public String stringify2(Object o);
     }
 
     @Test
     public void matches_matching_parameters() {
         mockery.checking(new Expec8ions() {{
-            allowing(calling(service)::stringify).with(42).will(() -> "42");
+            allowing(callTo(service)::stringify).with(42).will(() -> "42");
         }});
         assertEquals("42", service.stringify(42));
     }
@@ -39,7 +39,7 @@ public class Java8Test {
         Mockery localMockery = new Mockery();
         Service localService = localMockery.mock(Service.class);
         localMockery.checking(new Expec8ions() {{
-            allowing(calling(localService)::stringify).with(42).will(() -> "42");
+            allowing(callTo(localService)::stringify).with(42).will(() -> "42");
         }});
         try {
             localService.stringify(54);
@@ -50,18 +50,39 @@ public class Java8Test {
     }
 
     @Test
+    public void doesnt_match_non_matching_method() {
+        // JUnitRuleMockery will fail in tearDown
+        Mockery localMockery = new Mockery();
+        Service localService = localMockery.mock(Service.class);
+        localMockery.checking(new Expec8ions() {{
+            allowing(callTo(localService)::stringify2).with(42).will(() -> "42");
+        }});
+        try {
+            localService.stringify(54);
+            fail();
+        } catch (ExpectationError e) {
+            assertThat(e.toString(), containsString("54"));
+        }
+        try {
+            localMockery.assertIsSatisfied();
+            fail();
+        } catch (ExpectationError e) {
+            assertThat(e.toString(), containsString("42"));
+        }
+    }
+
+    @Test
     public void does_default_action() {
         mockery.checking(new Expec8ions() {{
-            allowing(calling(service)::stringify).with(42);
+            allowing(callTo(service)::stringify).with(42);
         }});
-
         assertEquals("", service.stringify(42));
     }
 
     @Test
-    public void allows_a_parameters_matcher() {
+    public void allows_anyParameters_matcher() {
         mockery.checking(new Expec8ions() {{
-            allowing(calling(service)::stringify).with(anyParameters()).will(String::valueOf);
+            allowing(callTo(service)::stringify).with(anyParameters()).will(String::valueOf);
         }});
 
         assertEquals("42", service.stringify(42));
