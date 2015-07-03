@@ -19,16 +19,62 @@ public class Expec8ions extends Expectations {
         return myCopyOfCurrentBuilder.of(mock);
     }
 
-    public <P1, R, X extends Throwable> MethodCapture1<P1, R, X> allowing(Function1<P1, R, X> method) {
+    public <P1, X extends Throwable> Proc1Method<P1, X> allowing(Proc1<P1, X> method) {
         return given(Cardinality.ALLOWING, method);
     }
 
-    public <P1, R, X extends Throwable> MethodCapture1<P1, R, X> given(Cardinality times, Function1<P1, R, X> method) {
-        return new MethodCapture1<>(method, times);
+    public <P1, X extends Throwable> Proc1Method<P1, X> given(Cardinality times, Proc1<P1, X> method) {
+        return new Proc1Method<>(method, times);
     }
 
-    public class MethodCapture1<P1, R, X extends Throwable> {
-        public MethodCapture1(Function1<P1, R, X> function, Cardinality cardinality) {
+
+    public <P1, R, X extends Throwable> Function1Method<P1, R, X> allowing(Function1<P1, R, X> method) {
+        return given(Cardinality.ALLOWING, method);
+    }
+
+    public <P1, R, X extends Throwable> Function1Method<P1, R, X> given(Cardinality times, Function1<P1, R, X> method) {
+        return new Function1Method<>(method, times);
+    }
+
+    public class Proc1Method<P1, X extends Throwable> {
+        public Proc1Method(Proc1<P1, X> function, Cardinality cardinality) {
+            myCopyOfCurrentBuilder.setCardinality(cardinality);
+            try {
+                function.apply(null); // captured by currentBuilder
+            } catch (Throwable ignored) {
+            }
+        }
+
+        public Will with(P1 p1) {
+            return withMatching(new AllParametersMatcher(new Object[]{p1}));
+        }
+
+        public Will withMatching(Matcher<P1> p1) {
+            return withMatching(new AllParametersMatcher(Arrays.asList(p1)));
+        }
+
+        public Will withMatching(ParametersMatcher parametersMatcher) {
+            myCopyOfCurrentBuilder.addParameterMatcher(parametersMatcher);
+            return new Will();
+        }
+
+        public class Will {
+            public void will(FallibleCallable<X> callable) {
+                will(new CallableAction<>(callable));
+            }
+
+            public void will(Action action) {
+                myCopyOfCurrentBuilder.setAction(action);
+            }
+
+            public void will(Proc1<P1, X> f) {
+                will(new Proc1Action<>(f));
+            }
+        }
+    }
+
+    public class Function1Method<P1, R, X extends Throwable> {
+        public Function1Method(Function1<P1, R, X> function, Cardinality cardinality) {
             myCopyOfCurrentBuilder.setCardinality(cardinality);
             try {
                 function.apply(null); // captured by currentBuilder

@@ -1,8 +1,10 @@
 package org.jmock;
 
+import org.hamcrest.Matchers;
 import org.hamcrest.core.IsAnything;
 import org.jmock.api.ExpectationError;
 import org.jmock.function.Expec8ions;
+import org.jmock.function.Function1;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ParametersMatcher;
 import org.junit.Rule;
@@ -27,6 +29,10 @@ public class Java8Test {
         public String stringify(int o);
         public String stringify2(int o);
         public int write(Object o) throws IOException;
+        public int overload(int o);
+        public int overload(float f);
+        public CharSequence echo(CharSequence s);
+        public void log(Object o);
     }
 
     @Test
@@ -136,6 +142,40 @@ public class Java8Test {
         } catch (RuntimeException e) {
             assertThat(e.toString(), containsString("whoops"));
         }
+    }
+
+    @Test
+    public void allows_overrides() {
+        mockery.checking(new Expec8ions() {{
+            allowing((Function1<Integer, Integer, RuntimeException>) callTo(service)::overload).with(7).will(() -> 7);
+            allowing((Function1<Float, Integer, RuntimeException>) callTo(service)::overload).with(7.7F).will(() -> 8);
+        }});
+        assertEquals(7, service.overload(7));
+        assertEquals(8, service.overload(7.7F));
+    }
+
+    @Test
+    public void allows_variance() {
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::echo).with("hello").will(() -> "hello");
+        }});
+        assertEquals("hello", service.echo("hello"));
+
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::echo).withMatching(Matchers.equalTo("helloSequence")).will(() -> "helloSequence");
+        }});
+        assertEquals("helloSequence", service.echo("helloSequence"));
+    }
+
+    @Test
+    public void allows_void_return() {
+        final Object[] param = new Object[1];
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::log).withMatching(anyParameters()).will((p) -> { param[0] = p; });
+            // allowing(callTo(service)::log).withMatching(anyParameters()).will((p) -> { return p; }); // doesn't compile :-)
+        }});
+        service.log("hello");
+        assertEquals("hello", param[0]);
     }
 
     private ParametersMatcher anyParameters() {
