@@ -43,14 +43,13 @@ public class Java8Test {
         }
     }
 
-    @Ignore("fails")
     @Test
     public void does_default_action() {
         mockery.checking(new Expec8ions() {{
             allowing(calling(service)::stringify).with(42);
         }});
 
-        assertNull(service.stringify(42));
+        assertEquals("", service.stringify(42));
     }
 
     @Test
