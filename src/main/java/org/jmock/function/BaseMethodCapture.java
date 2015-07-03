@@ -29,17 +29,18 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
         return createWill(currentBuilder);
     }
 
-    protected W withMatchingParameters(Object... values) {
+    protected W withParameterValues(Object... values) {
         return withMatching(new AllParametersMatcher(values));
     }
 
-    protected W withMatchingParameters(Matcher<?>... matchers) {
+    protected W withParameterMatchers(Matcher<?>... matchers) {
         return withMatching(new AllParametersMatcher(Arrays.asList(matchers)));
     }
 
-    protected W withMatchingParameters(Predicate...  predicates) {
+    @SuppressWarnings("Convert2MethodRef")
+    protected W withParameterPredicates(Predicate... predicates) {
         Stream<PredicateMatcher<Object>> predicateMatcherStream = Arrays.stream(predicates).map(p -> new PredicateMatcher<>(p));
-        return withMatchingParameters(predicateMatcherStream.toArray(PredicateMatcher[]::new));
+        return withParameterMatchers(predicateMatcherStream.toArray(PredicateMatcher[]::new));
     }
 
     protected abstract W createWill(InvocationExpectationBuilder builder);

@@ -17,15 +17,15 @@ public class Function1MethodCapture<P1, R, X extends Throwable> extends BaseMeth
     }
 
     public Function1Will with(P1 p1) {
-        return withMatchingParameters(p1);
+        return withParameterValues(p1);
     }
 
     public Function1Will withMatching(Matcher<P1> m1) {
-        return withMatchingParameters(m1);
+        return withParameterMatchers(m1);
     }
 
     public Function1Will withMatching(Predicate<P1> p1) {
-        return withMatchingParameters(p1);
+        return withParameterPredicates(p1);
     }
 
     protected Function1Will createWill(InvocationExpectationBuilder builder) {
