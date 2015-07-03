@@ -6,6 +6,8 @@ import org.jmock.internal.InvocationExpectationBuilder;
 import org.jmock.internal.ParametersMatcher;
 import org.jmock.internal.matcher.AllParametersMatcher;
 
+import java.util.function.Predicate;
+
 public class Proc1MethodCapture<P1, X extends Throwable> extends BaseMethodCapture {
     public Proc1MethodCapture(Proc1<P1, X> function, Cardinality cardinality, InvocationExpectationBuilder currentBuilder) {
         super(currentBuilder, cardinality);
@@ -21,6 +23,10 @@ public class Proc1MethodCapture<P1, X extends Throwable> extends BaseMethodCaptu
 
     public Will withMatching(Matcher<P1> p1) {
         return withMatching(allParametersMatcher(p1));
+    }
+
+    public Will withMatching(Predicate<P1> p1) {
+        return withMatching(new PredicateMatcher<>(p1));
     }
 
     public Will withMatching(ParametersMatcher parametersMatcher) {

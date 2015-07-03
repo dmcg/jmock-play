@@ -119,6 +119,17 @@ public class Java8Test {
     }
 
     @Test
+    public void can_use_predicates_for_parameters_matcher() {
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::stringify).withMatching(i -> i % 2 == 0).will(() -> "even");
+            allowing(callTo(service)::stringify).withMatching(i -> i % 2 != 0).will(() -> "odd");
+        }});
+
+        assertEquals("even", service.stringify(42));
+        assertEquals("odd", service.stringify(43));
+    }
+
+    @Test
     public void allows_checked_throws() {
         mockery.checking(new Expec8ions() {{
             allowing(callTo(service)::write).withMatching(anyParameters()).will(() -> {throw new IOException("whoops");});
