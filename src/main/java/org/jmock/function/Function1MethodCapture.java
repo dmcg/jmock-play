@@ -6,7 +6,7 @@ import org.jmock.internal.InvocationExpectationBuilder;
 
 import java.util.function.Predicate;
 
-public class Function1MethodCapture<P1, R, X extends Throwable> extends BaseMethodCapture<Function1Will> {
+public class Function1MethodCapture<P1, R, X extends Throwable> extends BaseMethodCapture<Function1MethodCapture.Function1Will> {
 
     public Function1MethodCapture(Function1<P1, R, X> function, Cardinality cardinality, InvocationExpectationBuilder currentBuilder) {
         super(currentBuilder, cardinality);
@@ -30,5 +30,20 @@ public class Function1MethodCapture<P1, R, X extends Throwable> extends BaseMeth
 
     protected Function1Will createWill(InvocationExpectationBuilder builder) {
         return new Function1Will(builder);
+    }
+
+    public class Function1Will extends BaseWill {
+
+        protected Function1Will(InvocationExpectationBuilder currentBuilder) {
+            super(currentBuilder);
+        }
+
+        public void will(FallibleSupplier<R, X> supplier) {
+            will(new SupplierAction<>(supplier));
+        }
+
+        public void will(Function1<P1, R, X> f) {
+            will(new Function1Action<>(f));
+        }
     }
 }

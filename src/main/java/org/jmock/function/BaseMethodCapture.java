@@ -43,5 +43,4 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
     }
 
     protected abstract W createWill(InvocationExpectationBuilder builder);
-
 }
