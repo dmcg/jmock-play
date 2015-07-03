@@ -7,6 +7,8 @@ import org.jmock.internal.ParametersMatcher;
 import org.jmock.internal.matcher.AllParametersMatcher;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public abstract class BaseMethodCapture<W extends BaseWill> {
 
@@ -22,13 +24,22 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
         currentBuilder.addParameterMatcher(parametersMatcher);
     }
 
-    protected ParametersMatcher allParametersMatcher(Matcher<?>... matchers) {
-        return new AllParametersMatcher(Arrays.asList(matchers));
-    }
-
     public W withMatching(ParametersMatcher parametersMatcher) {
         addParameterMatcher(parametersMatcher);
         return createWill(currentBuilder);
+    }
+
+    protected W withMatchingParameters(Object... values) {
+        return withMatching(new AllParametersMatcher(values));
+    }
+
+    protected W withMatchingParameters(Matcher<?>... matchers) {
+        return withMatching(new AllParametersMatcher(Arrays.asList(matchers)));
+    }
+
+    protected W withMatchingParameters(Predicate...  predicates) {
+        Stream<PredicateMatcher<Object>> predicateMatcherStream = Arrays.stream(predicates).map(PredicateMatcher::new);
+        return withMatchingParameters(predicateMatcherStream.toArray(PredicateMatcher[]::new));
     }
 
     protected abstract W createWill(InvocationExpectationBuilder builder);

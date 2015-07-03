@@ -3,7 +3,6 @@ package org.jmock.function;
 import org.hamcrest.Matcher;
 import org.jmock.internal.Cardinality;
 import org.jmock.internal.InvocationExpectationBuilder;
-import org.jmock.internal.matcher.AllParametersMatcher;
 
 import java.util.function.Predicate;
 
@@ -18,15 +17,15 @@ public class Function1MethodCapture<P1, R, X extends Throwable> extends BaseMeth
     }
 
     public Function1Will with(P1 p1) {
-        return withMatching(new AllParametersMatcher(new Object[]{p1}));
+        return withMatchingParameters(p1);
     }
 
-    public Function1Will withMatching(Matcher<P1> p1) {
-        return withMatching(allParametersMatcher(p1));
+    public Function1Will withMatching(Matcher<P1> m1) {
+        return withMatchingParameters(m1);
     }
 
     public Function1Will withMatching(Predicate<P1> p1) {
-        return withMatching(new PredicateMatcher<>(p1));
+        return withMatchingParameters(p1);
     }
 
     protected Function1Will createWill(InvocationExpectationBuilder builder) {
