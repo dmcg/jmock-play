@@ -39,6 +39,12 @@ public class Expec8ions extends Expectations {
             return with(new AllParametersMatcher(new Object[] {p1}));
         }
 
+        public Will with(Matcher<P1> p1) {
+            myCopyOfCurrentBuilder.addParameterMatcher(p1);
+            return new Will();
+        }
+
+
         public Will with(ParametersMatcher parametersMatcher) {
             myCopyOfCurrentBuilder.addParameterMatcher(parametersMatcher);
             return new Will();

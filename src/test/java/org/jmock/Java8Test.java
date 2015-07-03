@@ -1,10 +1,12 @@
 package org.jmock;
 
+import org.hamcrest.Matchers;
 import org.hamcrest.core.IsAnything;
 import org.jmock.api.ExpectationError;
 import org.jmock.function.Expec8ions;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ParametersMatcher;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -12,6 +14,8 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -80,6 +84,22 @@ public class Java8Test {
             allowing(callTo(service)::stringify).with(42);
         }});
         assertEquals("", service.stringify(42));
+    }
+
+    @Ignore("TBD")
+    @Test
+    public void allows_parameters_matcher() {
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::stringify).with(greaterThan(42)).will(String::valueOf);
+        }});
+        assertEquals("54", service.stringify(54));
+
+        try {
+            service.stringify(42);
+            fail();
+        } catch (ExpectationError e) {
+            assertThat(e.toString(), containsString("42"));
+        }
     }
 
     @Test
