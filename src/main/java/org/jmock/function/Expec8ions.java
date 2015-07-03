@@ -7,6 +7,7 @@ import org.jmock.internal.*;
 import org.jmock.internal.matcher.AllParametersMatcher;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 public class Expec8ions extends Expectations {
@@ -36,16 +37,14 @@ public class Expec8ions extends Expectations {
         }
 
         public Will with(P1 p1) {
-            return with(new AllParametersMatcher(new Object[] {p1}));
+            return withMatching(new AllParametersMatcher(new Object[]{p1}));
         }
 
-        public Will with(Matcher<P1> p1) {
-            myCopyOfCurrentBuilder.addParameterMatcher(p1);
-            return new Will();
+        public Will withMatching(Matcher<P1> p1) {
+            return withMatching(new AllParametersMatcher(Arrays.asList(p1)));
         }
 
-
-        public Will with(ParametersMatcher parametersMatcher) {
+        public Will withMatching(ParametersMatcher parametersMatcher) {
             myCopyOfCurrentBuilder.addParameterMatcher(parametersMatcher);
             return new Will();
         }

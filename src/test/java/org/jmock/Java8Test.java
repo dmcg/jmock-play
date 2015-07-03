@@ -1,12 +1,10 @@
 package org.jmock;
 
-import org.hamcrest.Matchers;
 import org.hamcrest.core.IsAnything;
 import org.jmock.api.ExpectationError;
 import org.jmock.function.Expec8ions;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ParametersMatcher;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -15,7 +13,6 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -27,8 +24,8 @@ public class Java8Test {
     private final Service service = mockery.mock(Service.class);
 
     public static interface Service {
-        public String stringify(Object o);
-        public String stringify2(Object o);
+        public String stringify(int o);
+        public String stringify2(int o);
         public int write(Object o) throws IOException;
     }
 
@@ -86,16 +83,19 @@ public class Java8Test {
         assertEquals("", service.stringify(42));
     }
 
-    @Ignore("TBD")
     @Test
-    public void allows_parameters_matcher() {
-        mockery.checking(new Expec8ions() {{
-            allowing(callTo(service)::stringify).with(greaterThan(42)).will(String::valueOf);
+    public void respects_parameters_matcher() {
+        // JUnitRuleMockery will fail in tearDown
+        Mockery localMockery = new Mockery();
+        Service localService = localMockery.mock(Service.class);
+
+        localMockery.checking(new Expec8ions() {{
+            allowing(callTo(localService)::stringify).withMatching(greaterThan(42)).will(String::valueOf);
         }});
-        assertEquals("54", service.stringify(54));
+        assertEquals("54", localService.stringify(54));
 
         try {
-            service.stringify(42);
+            localService.stringify(42);
             fail();
         } catch (ExpectationError e) {
             assertThat(e.toString(), containsString("42"));
@@ -105,7 +105,7 @@ public class Java8Test {
     @Test
     public void allows_anyParameters_matcher() {
         mockery.checking(new Expec8ions() {{
-            allowing(callTo(service)::stringify).with(anyParameters()).will(String::valueOf);
+            allowing(callTo(service)::stringify).withMatching(anyParameters()).will(String::valueOf);
         }});
 
         assertEquals("42", service.stringify(42));
@@ -115,7 +115,7 @@ public class Java8Test {
     @Test
     public void allows_checked_throws() {
         mockery.checking(new Expec8ions() {{
-            allowing(callTo(service)::write).with(anyParameters()).will(() -> {throw new IOException("whoops");});
+            allowing(callTo(service)::write).withMatching(anyParameters()).will(() -> {throw new IOException("whoops");});
         }});
         try {
             service.write(54);
@@ -128,7 +128,7 @@ public class Java8Test {
     @Test
     public void allows_unchecked_throws() {
         mockery.checking(new Expec8ions() {{
-            allowing(callTo(service)::stringify).with(anyParameters()).will(() -> {throw new RuntimeException("whoops");});
+            allowing(callTo(service)::stringify).withMatching(anyParameters()).will(() -> {throw new RuntimeException("whoops");});
         }});
         try {
             service.stringify(54);
