@@ -37,7 +37,7 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
         return withMatching(new AllParametersMatcher(Arrays.asList(matchers)));
     }
 
-    @SuppressWarnings("Convert2MethodRef")
+    @SuppressWarnings({"Convert2MethodRef", "unchecked"})
     protected W withParameterPredicates(Predicate... predicates) {
         Stream<PredicateMatcher<Object>> predicateMatcherStream = Arrays.stream(predicates).map(p -> new PredicateMatcher<>(p));
         return withParameterMatchers(predicateMatcherStream.toArray(PredicateMatcher[]::new));

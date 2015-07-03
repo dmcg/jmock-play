@@ -6,7 +6,7 @@ import org.jmock.internal.InvocationExpectationBuilder;
 
 import java.util.function.Predicate;
 
-public class Proc1MethodCapture<P1, X extends Throwable> extends BaseMethodCapture<Proc1MethodCapture.Proc1Will> {
+public class Proc1MethodCapture<P1, X extends Throwable> extends BaseMethodCapture<Proc1MethodCapture.Proc1Will<P1, X>> {
 
     public Proc1MethodCapture(Proc1<P1, X> proc, Cardinality cardinality, InvocationExpectationBuilder currentBuilder) {
         super(currentBuilder, cardinality);
@@ -16,23 +16,23 @@ public class Proc1MethodCapture<P1, X extends Throwable> extends BaseMethodCaptu
         }
     }
 
-    public Proc1Will with(P1 p1) {
+    public Proc1Will<P1, X> with(P1 p1) {
         return withParameterValues(p1);
     }
 
-    public Proc1Will withMatching(Matcher<P1> m1) {
+    public Proc1Will<P1, X> withMatching(Matcher<P1> m1) {
         return withParameterMatchers(m1);
     }
 
-    public Proc1Will withMatching(Predicate<P1> p1) {
+    public Proc1Will<P1, X> withMatching(Predicate<P1> p1) {
         return withParameterPredicates(p1);
     }
 
-    protected Proc1Will createWill(InvocationExpectationBuilder builder) {
-        return new Proc1Will(builder);
+    protected Proc1Will<P1, X> createWill(InvocationExpectationBuilder builder) {
+        return new Proc1Will<>(builder);
     }
 
-    public class Proc1Will extends BaseWill {
+    public static class Proc1Will<P1, X extends Throwable> extends BaseWill {
 
         protected Proc1Will(InvocationExpectationBuilder currentBuilder) {
             super(currentBuilder);

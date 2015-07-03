@@ -24,14 +24,14 @@ public class Java8Test {
 
     private final Service service = mockery.mock(Service.class);
 
-    public static interface Service {
-        public String stringify(int o);
-        public String stringify2(int o);
-        public int write(Object o) throws IOException;
-        public int overload(int o);
-        public int overload(float f);
-        public CharSequence echo(CharSequence s);
-        public void log(Object o);
+    public interface Service {
+        String stringify(int o);
+        String stringify2(int o);
+        int write(Object o) throws IOException;
+        int overload(int o);
+        int overload(float f);
+        CharSequence echo(CharSequence s);
+        void log(Object o);
     }
 
     @Test
@@ -200,6 +200,6 @@ public class Java8Test {
         public boolean isCompatibleWith(Object[] parameters) {
             return true;
         }
-    };
+    }
 
 }
