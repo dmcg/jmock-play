@@ -11,7 +11,7 @@ public class Proc1MethodCapture<P1, X extends Throwable> extends BaseMethodCaptu
     public Proc1MethodCapture(Proc1<P1, X> proc, Cardinality cardinality, InvocationExpectationBuilder currentBuilder) {
         super(currentBuilder, cardinality);
         try {
-            proc.apply(null); // captured by currentBuilder
+            proc.call(null); // captured by currentBuilder
         } catch (Throwable ignored) {
         }
     }
@@ -38,8 +38,8 @@ public class Proc1MethodCapture<P1, X extends Throwable> extends BaseMethodCaptu
             super(currentBuilder);
         }
 
-        public void will(FallibleCallable<X> callable) {
-            will(new CallableAction<>(callable));
+        public void will(Proc0<X> callable) {
+            will(new Proc0Action<>(callable));
         }
 
         public void will(Proc1<P1, X> f) {

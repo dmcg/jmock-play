@@ -4,16 +4,16 @@ import org.hamcrest.Description;
 import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 
-public class SupplierAction<R, X extends Throwable> implements Action {
-    private final FallibleSupplier<R, X> supplier;
+public class Func0Action<R, X extends Throwable> implements Action {
+    private final Func0<R, X> function;
 
-    public SupplierAction(FallibleSupplier<R, X> supplier) {
-        this.supplier = supplier;
+    public Func0Action(Func0<R, X> function) {
+        this.function = function;
     }
 
     @Override
     public R invoke(Invocation invocation) throws X {
-        return supplier.get();
+        return function.apply();
     }
 
     @Override

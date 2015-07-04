@@ -4,16 +4,16 @@ import org.hamcrest.Description;
 import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 
-public class CallableAction<X extends Throwable> implements Action {
-    private final FallibleCallable<X> callable;
+public class Proc0Action<X extends Throwable> implements Action {
+    private final Proc0<X> proc;
 
-    public CallableAction(FallibleCallable<X> callable) {
-        this.callable = callable;
+    public Proc0Action(Proc0<X> proc) {
+        this.proc = proc;
     }
 
     @Override
     public Object invoke(Invocation invocation) throws Throwable {
-        callable.call();
+        proc.call();
         return null;
     }
 

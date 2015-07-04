@@ -4,7 +4,7 @@ import org.hamcrest.Matchers;
 import org.hamcrest.core.IsAnything;
 import org.jmock.api.ExpectationError;
 import org.jmock.function.Expec8ions;
-import org.jmock.function.Function1;
+import org.jmock.function.Func1;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ParametersMatcher;
 import org.junit.Rule;
@@ -15,8 +15,7 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class Java8Test {
 
@@ -32,6 +31,8 @@ public class Java8Test {
         int overload(float f);
         CharSequence echo(CharSequence s);
         void log(Object o);
+        long timeNow();
+        void thing();
     }
 
     @Test
@@ -157,8 +158,8 @@ public class Java8Test {
     @Test
     public void allows_overrides() {
         mockery.checking(new Expec8ions() {{
-            allowing((Function1<Integer, Integer, RuntimeException>) callTo(service)::overload).with(7).will(() -> 7);
-            allowing((Function1<Float, Integer, RuntimeException>) callTo(service)::overload).with(7.7F).will(() -> 8);
+            allowing((Func1<Integer, Integer, RuntimeException>) callTo(service)::overload).with(7).will(() -> 7);
+            allowing((Func1<Float, Integer, RuntimeException>) callTo(service)::overload).with(7.7F).will(() -> 8);
         }});
         assertEquals(7, service.overload(7));
         assertEquals(8, service.overload(7.7F));
@@ -186,6 +187,26 @@ public class Java8Test {
         }});
         service.log("hello");
         assertEquals("hello", param[0]);
+    }
+
+    @Test
+    public void function0_has_no_with() {
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::timeNow).will(System::currentTimeMillis);
+        }});
+        assertThat(service.timeNow(), greaterThan(0L));
+    }
+
+    @Test
+    public void proc0_has_no_with() {
+        final boolean[] called = new boolean[1];
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::thing).will(() -> called[0] = true);
+        }});
+        assertFalse(called[0]);
+
+        service.thing();
+        assertTrue(called[0]);
     }
 
     private ParametersMatcher anyParameters() {
