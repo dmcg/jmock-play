@@ -1,6 +1,7 @@
-package org.jmock.function;
+package org.jmock.function.internal;
 
 import org.hamcrest.Matcher;
+import org.jmock.function.PredicateMatcher;
 import org.jmock.internal.Cardinality;
 import org.jmock.internal.InvocationExpectationBuilder;
 import org.jmock.internal.ParametersMatcher;

@@ -1,4 +1,4 @@
-package org.jmock.function;
+package org.jmock.function.internal;
 
 import org.jmock.api.Action;
 import org.jmock.internal.InvocationExpectationBuilder;

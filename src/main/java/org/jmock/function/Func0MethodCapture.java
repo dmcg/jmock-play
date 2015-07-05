@@ -1,5 +1,7 @@
 package org.jmock.function;
 
+import org.jmock.function.internal.BaseMethodCapture;
+import org.jmock.function.internal.BaseWill;
 import org.jmock.internal.Cardinality;
 import org.jmock.internal.InvocationExpectationBuilder;
 
