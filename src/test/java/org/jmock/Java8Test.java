@@ -2,20 +2,23 @@ package org.jmock;
 
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsAnything;
+import org.jmock.api.Action;
 import org.jmock.api.ExpectationError;
 import org.jmock.function.Expec8ions;
 import org.jmock.function.Func1;
 import org.jmock.function.Proc1;
 import org.jmock.integration.junit4.JUnitRuleMockery;
+import org.jmock.internal.ExpectationBuilder;
+import org.jmock.internal.ExpectationCollector;
 import org.jmock.internal.ParametersMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class Java8Test {
@@ -34,6 +37,7 @@ public class Java8Test {
         void log(Object o);
         long timeNow();
         void thing();
+        String concat(String prefix, Object o);
     }
 
     @Test
@@ -183,7 +187,9 @@ public class Java8Test {
     public void allows_void_return() {
         final Object[] param = new Object[1];
         mockery.checking(new Expec8ions() {{
-            allowing(callTo(service)::log).withMatching(anyParameters()).will((p) -> { param[0] = p; });
+            allowing(callTo(service)::log).withMatching(anyParameters()).will((p) -> {
+                param[0] = p;
+            });
             // allowing(callTo(service)::log).withMatching(anyParameters()).will((p) -> { return p; }); // doesn't compile :-)
         }});
         service.log("hello");
@@ -217,6 +223,15 @@ public class Java8Test {
         }));
 
         assertEquals("42", service.stringify(42));
+    }
+
+    @Test
+    public void two_parameters() {
+        mockery.checking(Expec8ions.of(e -> {
+            e.allowing(e.callTo(service)::concat).withMatching(equalTo("prefix"), anything()).will((p, s) -> p + "-" + s);
+        }));
+
+        assertEquals("prefix-suffix", service.concat("prefix", "suffix"));
     }
 
     private ParametersMatcher anyParameters() {

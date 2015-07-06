@@ -22,8 +22,8 @@ public class Proc1MethodCapture<P1, X extends Exception> extends BaseMethodCaptu
         return withParameterValues(p1);
     }
 
-    public Proc1Will<P1, X> withMatching(Matcher<P1> m1) {
-        return withParameterMatchers(m1);
+    public Proc1Will<P1, X> withMatching(Matcher<P1> p1) {
+        return withParameterMatchers(p1);
     }
 
     public Proc1Will<P1, X> withMatching(Predicate<P1> p1) {

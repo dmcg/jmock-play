@@ -22,8 +22,8 @@ public class Func1MethodCapture<P1, R, X extends Exception> extends BaseMethodCa
         return withParameterValues(p1);
     }
 
-    public Func1Will<P1, R, X> withMatching(Matcher<P1> m1) {
-        return withParameterMatchers(m1);
+    public Func1Will<P1, R, X> withMatching(Matcher<P1> p1) {
+        return withParameterMatchers(p1);
     }
 
     public Func1Will<P1, R, X> withMatching(Predicate<P1> p1) {

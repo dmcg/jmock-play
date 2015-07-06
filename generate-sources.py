@@ -11,6 +11,9 @@ subs = (
         'Proc1': 'Proc2',
         '<P1,': '<P1, P2,',
         '(P1 p1)': '(P1 p1, P2 p2)',
+        '(p1)': '(p1, p2)',
+        '(Matcher<P1> p1)': '(Matcher<P1> p1, Matcher<P2> p2)',
+        '(Predicate<P1> p1)': '(Predicate <P1> p1, Predicate<P2> p2)',
         '(null)': '(null, null)',
         '(P1) invocation.getParameter(0)': '(P1) invocation.getParameter(0), \n' +
                                            '(P2) invocation.getParameter(1)'
@@ -20,6 +23,9 @@ subs = (
         'Proc1': 'Proc3',
         '<P1,': '<P1, P2, P3,',
         '(P1 p1)': '(P1 p1, P2 p2, P3 p3)',
+        '(p1)': '(p1, p2, p3)',
+        '(Matcher<P1> p1)': '(Matcher<P1> p1, Matcher<P2> p2, Matcher<P3> p3)',
+        '(Predicate<P1> p1)': '(Predicate <P1> p1, Predicate<P2> p2, Predicate<P3> p3)',
         '(null)': '(null, null, null)',
         '(P1) invocation.getParameter(0)': '(P1) invocation.getParameter(0), \n' +
                                            '(P2) invocation.getParameter(1), (P3) invocation.getParameter(2)'
@@ -29,6 +35,9 @@ subs = (
         'Proc1': 'Proc4',
         '<P1,': '<P1, P2, P3, P4,',
         '(P1 p1)': '(P1 p1, P2 p2, P3 p3, P4 p4)',
+        '(p1)': '(p1, p2, p3, p4)',
+        '(Matcher<P1> p1)': '(Matcher<P1> p1, Matcher<P2> p2, Matcher<P3> p3, Matcher<P4> p4)',
+        '(Predicate<P1> p1)': '(Predicate <P1> p1, Predicate<P2> p2, Predicate<P3> p3, Predicate<P4> p4)',
         '(null)': '(null, null, null, null)',
         '(P1) invocation.getParameter(0)': '(P1) invocation.getParameter(0), \n' +
                                            '(P2) invocation.getParameter(1), (P3) invocation.getParameter(2), \n' +
@@ -39,6 +48,9 @@ subs = (
         'Proc1': 'Proc5',
         '<P1,': '<P1, P2, P3, P4, P5,',
         '(P1 p1)': '(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)',
+        '(p1)': '(p1, p2, p3, p4, p5)',
+        '(Matcher<P1> p1)': '(Matcher<P1> p1, Matcher<P2> p2, Matcher<P3> p3, Matcher<P4> p4, Matcher<P5> p5)',
+        '(Predicate<P1> p1)': '(Predicate <P1> p1, Predicate<P2> p2, Predicate<P3> p3, Predicate<P4> p4, Predicate<P5> p5)',
         '(null)': '(null, null, null, null, null)',
         '(P1) invocation.getParameter(0)': '(P1) invocation.getParameter(0), \n' +
                                            '(P2) invocation.getParameter(1), (P3) invocation.getParameter(2), \n' +
@@ -49,6 +61,9 @@ subs = (
         'Proc1': 'Proc6',
         '<P1,': '<P1, P2, P3, P4, P5, P6,',
         '(P1 p1)': '(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)',
+        '(p1)': '(p1, p2, p3, p4, p5, p6)',
+        '(Matcher<P1> p1)': '(Matcher<P1> p1, Matcher<P2> p2, Matcher<P3> p3, Matcher<P4> p4, Matcher<P5> p5, Matcher<P6> p6)',
+        '(Predicate<P1> p1)': '(Predicate <P1> p1, Predicate<P2> p2, Predicate<P3> p3, Predicate<P4> p4, Predicate<P5> p5, Predicate<P6> p6)',
         '(null)': '(null, null, null, null, null, null)',
         '(P1) invocation.getParameter(0)': '(P1) invocation.getParameter(0), \n' +
                                            '(P2) invocation.getParameter(1), (P3) invocation.getParameter(2), \n' +
@@ -60,6 +75,9 @@ subs = (
         'Proc1': 'Proc7',
         '<P1,': '<P1, P2, P3, P4, P5, P6, P7,',
         '(P1 p1)': '(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7)',
+        '(p1)': '(p1, p2, p3, p4, p5, p7)',
+        '(Matcher<P1> p1)': '(Matcher<P1> p1, Matcher<P2> p2, Matcher<P3> p3, Matcher<P4> p4, Matcher<P5> p5, Matcher<P6> p6, Matcher<P7> p7)',
+        '(Predicate<P1> p1)': '(Predicate <P1> p1, Predicate<P2> p2, Predicate<P3> p3, Predicate<P4> p4, Predicate<P5> p5, Predicate<P6> p6, Predicate<P7> p7)',
         '(null)': '(null, null, null, null, null, null, null)',
         '(P1) invocation.getParameter(0)': '(P1) invocation.getParameter(0), \n' +
                                            '(P2) invocation.getParameter(1), (P3) invocation.getParameter(2), \n' +
