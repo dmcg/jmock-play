@@ -5,7 +5,7 @@ import org.jmock.function.internal.BaseWill;
 import org.jmock.internal.Cardinality;
 import org.jmock.internal.InvocationExpectationBuilder;
 
-public class Func0MethodCapture<R, X extends Throwable> extends BaseMethodCapture<Func0MethodCapture.Func0Will<R, X>> {
+public class Func0MethodCapture<R, X extends Exception> extends BaseMethodCapture<Func0MethodCapture.Func0Will<R, X>> {
 
     public Func0MethodCapture(Func0<R, X> function, Cardinality cardinality, InvocationExpectationBuilder currentBuilder) {
         super(currentBuilder, cardinality);
@@ -23,7 +23,7 @@ public class Func0MethodCapture<R, X extends Throwable> extends BaseMethodCaptur
         return new Func0Will<>(builder);
     }
 
-    public static class Func0Will<R, X extends Throwable> extends BaseWill {
+    public static class Func0Will<R, X extends Exception> extends BaseWill {
 
         protected Func0Will(InvocationExpectationBuilder currentBuilder) {
             super(currentBuilder);

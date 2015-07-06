@@ -4,7 +4,7 @@ import org.hamcrest.Description;
 import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 
-public class Func1Action<P1, R, X extends Throwable> implements Action {
+public class Func1Action<P1, R, X extends Exception> implements Action {
     private final Func1<P1, R, X> function;
 
     public Func1Action(Func1<P1, R, X> function) {

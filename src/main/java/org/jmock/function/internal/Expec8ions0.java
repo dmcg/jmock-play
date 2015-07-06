@@ -14,19 +14,19 @@ public class Expec8ions0 extends BaseExpec8ions {
         return myCopyOfCurrentBuilder.of(mock);
     }
 
-    public <X extends Throwable> Proc0MethodCapture.Proc0Will<X> allowing(Proc0<X> method) {
+    public <X extends Exception> Proc0MethodCapture.Proc0Will<X> allowing(Proc0<X> method) {
         return given(Cardinality.ALLOWING, method);
     }
 
-    public <X extends Throwable> Proc0MethodCapture.Proc0Will<X> given(Cardinality times, Proc0<X> method) {
+    public <X extends Exception> Proc0MethodCapture.Proc0Will<X> given(Cardinality times, Proc0<X> method) {
         return new Proc0MethodCapture<>(method, times, myCopyOfCurrentBuilder).with();
     }
 
-    public <R, X extends Throwable> Func0MethodCapture.Func0Will<R, X> allowing(Func0<R, X> method) {
+    public <R, X extends Exception> Func0MethodCapture.Func0Will<R, X> allowing(Func0<R, X> method) {
         return given(Cardinality.ALLOWING, method);
     }
 
-    public <R, X extends Throwable> Func0MethodCapture.Func0Will<R, X> given(Cardinality times, Func0<R, X> method) {
+    public <R, X extends Exception> Func0MethodCapture.Func0Will<R, X> given(Cardinality times, Func0<R, X> method) {
         return new Func0MethodCapture<>(method, times, myCopyOfCurrentBuilder).with();
     }
 }

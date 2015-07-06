@@ -4,7 +4,7 @@ import org.hamcrest.Description;
 import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 
-public class Proc0Action<X extends Throwable> implements Action {
+public class Proc0Action<X extends Exception> implements Action {
     private final Proc0<X> proc;
 
     public Proc0Action(Proc0<X> proc) {
