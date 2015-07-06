@@ -5,6 +5,7 @@ import org.hamcrest.core.IsAnything;
 import org.jmock.api.ExpectationError;
 import org.jmock.function.Expec8ions;
 import org.jmock.function.Func1;
+import org.jmock.function.Proc1;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ParametersMatcher;
 import org.junit.Rule;
@@ -207,6 +208,15 @@ public class Java8Test {
 
         service.thing();
         assertTrue(called[0]);
+    }
+
+    @Test
+    public void lambda_for_expectations() {
+        mockery.checking(Expec8ions.of(e -> {
+            e.allowing(e.callTo(service)::stringify).withMatching(anyParameters()).will(String::valueOf);
+        }));
+
+        assertEquals("42", service.stringify(42));
     }
 
     private ParametersMatcher anyParameters() {
