@@ -1,5 +1,6 @@
 package org.jmock.function;
 
+import org.jmock.internal.Cardinality;
 import org.jmock.function.internal.Expec8ions1;
 
 public class Expec8ions extends Expec8ions1 {
@@ -13,5 +14,9 @@ public class Expec8ions extends Expec8ions1 {
     public static Expec8ions expec8ions(Proc1<Expec8ions, RuntimeException> consumer) {
         return of(consumer);
     }
+
+    /* GENERATED-CONTENT-STARTS */
+    /* CONTENT-HERE */
+    /* GENERATED-CONTENT-ENDS */
 
 }

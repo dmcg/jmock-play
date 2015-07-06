@@ -1,4 +1,3 @@
-__author__ = 'duncan'
 
 import glob
 import re
@@ -69,27 +68,20 @@ subs = (
     },
 )
 
-sources = glob.glob("src/main/java/org/jmock/function/????1*.java")
-
 
 def output_path(input_path, arity):
     return re.sub(r'1(.*.java)', str(arity) + r"\1", input_path.replace('src', 'target/generated-sources'))
 
 
-def replace(line, subs):
-    for key in subs.keys():
-        line = line.replace(key, subs[key])
+def replace_from_dict(line, subs_as_dict):
+    for key in subs_as_dict.keys():
+        line = line.replace(key, subs_as_dict[key])
     return line
 
 
-def replace_lines(lines, subs):
-    for line in lines:
-        yield replace(line, subs)
-
-
-def generate(source, subs):
-    lines = open(source)
-    return replace_lines(lines, subs)
+def generate(source_path, subs):
+    lines = open(source_path)
+    return (replace_from_dict(line, subs) for line in lines)
 
 
 def create_parent(path):
@@ -98,10 +90,40 @@ def create_parent(path):
         os.makedirs(parent)
 
 
-for arity in range(2, 8):
-    for source in sources:
-        path = output_path(source, arity)
-        create_parent(path)
-        output = open(path, "w")
-        for line in generate(source, subs[arity]):
+def generate_class(source_path, output_path, arity):
+    create_parent(output_path)
+    output = open(output_path, "w")
+    for line in generate(source_path, subs[arity]):
+        output.write(line)
+
+
+def generate_classes(source_paths, end_artiry):
+    for arity in range(2, end_artiry):
+        for source_path in source_paths:
+            generate_class(source_path, output_path(source_path, arity), arity)
+
+
+def write_expecations_arities(output, end_arity):
+    arity1_template_lines = [line for line in open('src/main/java/org/jmock/function/internal/Expec8ions1.java') if line.startswith(' ')]
+    for arity in range(2, end_arity):
+        for line in (replace_from_dict(line, subs[arity]) for line in arity1_template_lines):
             output.write(line)
+
+
+def generate_expec8ions(end_arity):
+    template_lines = open('src/main/java/org/jmock/function/Expec8ions.java.template')
+    path = 'target/generated-sources/main/java/org/jmock/function/Expec8ions.java'
+    create_parent(path)
+    output = open(path, "w")
+    for line in template_lines:
+        if line.find('/* CONTENT-HERE */') > 0:
+            write_expecations_arities(output, end_arity)
+        else:
+            output.write(line)
+
+    pass
+
+end_arity = 8
+sources = glob.glob("src/main/java/org/jmock/function/????1*.java")
+generate_classes(sources, end_arity)
+generate_expec8ions(end_arity)
