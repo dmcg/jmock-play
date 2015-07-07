@@ -5,6 +5,7 @@ import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 
 public class Proc1Action<P1, X extends Exception> implements Action {
+
     private final Proc1<P1, X> proc;
 
     public Proc1Action(Proc1<P1, X> proc) {
