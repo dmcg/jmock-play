@@ -13,13 +13,11 @@ import java.util.List;
 
 public class BaseExpec8ions extends Expectations {
 
-    protected InvocationExpectationBuilder currentBuilder = null;
-
     public <T> T callTo(T mock) {
         // the currentBuilder captures the method called using the returned mock when the appropriate MethodCapture invokes
         // it with dummy args
-        currentBuilder = (InvocationExpectationBuilder) exactly(1); // cardinality will be changed later, but this gives us access to currentBuilder
-        return currentBuilder.of(mock);
+        exactly(1); // cardinality will be changed later, but this gives us access to currentBuilder
+        return currentBuilder().of(mock);
     }
 
     public void buildExpectations(Action defaultAction, ExpectationCollector collector) {

@@ -17,7 +17,7 @@ public class Expec8ions0 extends BaseExpec8ions {
     }
 
     public <X extends Exception> Proc0MethodCapture.Proc0Will<X> given(Cardinality times, Proc0<X> method) {
-        return new Proc0MethodCapture<>(method, times, currentBuilder).with();
+        return new Proc0MethodCapture<>(method, times, currentBuilder()).with();
     }
 
     public <R, X extends Exception> Func0MethodCapture.Func0Will<R, X> once(Func0<R, X> method) {
@@ -29,6 +29,6 @@ public class Expec8ions0 extends BaseExpec8ions {
     }
 
     public <R, X extends Exception> Func0MethodCapture.Func0Will<R, X> given(Cardinality times, Func0<R, X> method) {
-        return new Func0MethodCapture<>(method, times, currentBuilder).with();
+        return new Func0MethodCapture<>(method, times, currentBuilder()).with();
     }
 }
