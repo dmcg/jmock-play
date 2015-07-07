@@ -30,7 +30,7 @@ public class Func0MethodCapture<R, X extends Exception> extends BaseMethodCaptur
         }
 
         public void will(Func0<R, X> function) {
-            will(new Func0Action<>(function));
+            will(function.asAction());
         }
 
     }

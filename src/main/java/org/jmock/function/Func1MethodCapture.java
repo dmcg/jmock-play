@@ -41,11 +41,11 @@ public class Func1MethodCapture<P1, R, X extends Exception> extends BaseMethodCa
         }
 
         public void will(Func0<R, X> supplier) {
-            will(new Func0Action<>(supplier));
+            will(supplier.asAction());
         }
 
         public void will(Func1<P1, R, X> f) {
-            will(new Func1Action<>(f));
+            will(f.asAction());
         }
     }
 }

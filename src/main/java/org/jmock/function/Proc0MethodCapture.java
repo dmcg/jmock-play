@@ -30,7 +30,7 @@ public class Proc0MethodCapture<X extends Exception> extends BaseMethodCapture<P
         }
 
         public void will(Proc0<X> callable) {
-            will(new Proc0Action<>(callable));
+            will(callable.asAction());
         }
     }
 }

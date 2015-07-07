@@ -41,11 +41,11 @@ public class Proc1MethodCapture<P1, X extends Exception> extends BaseMethodCaptu
         }
 
         public void will(Proc0<X> callable) {
-            will(new Proc0Action<>(callable));
+            will(callable.asAction());
         }
 
         public void will(Proc1<P1, X> f) {
-            will(new Proc1Action<>(f));
+            will(f.asAction());
         }
     }
 
