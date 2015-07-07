@@ -277,4 +277,16 @@ public class Java8Test {
         f.call(localMockery, localService);
     }
 
+// Other syntax ideas
+//    @Test
+//    public void matches_matching_parameters_nat() {
+//        mockery.allowing(service::stringify).with(equalTo(42)).will();
+//        mockery.allowing(() -> service.stringify(with(equalTo(42));).will();
+//        mockery.allowing((with) -> service.stringify(with.anInt(equalTo(42));).will();
+//
+//        mockery.allowing((e) -> oneOf(() -> service.stringify(42))).will());
+//
+//        assertEquals("42", service.stringify(42));
+//    }
+
 }
