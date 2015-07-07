@@ -94,6 +94,14 @@ public class Java8Test {
     }
 
     @Test
+    public void default_parameters_works() {
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::stringify);
+        }});
+        assertEquals("", service.stringify(42));
+    }
+
+    @Test
     public void respects_parameters_matcher() {
         withLocalMockery((localMockery, localService) -> {
             localMockery.checking(new Expec8ions() {{
