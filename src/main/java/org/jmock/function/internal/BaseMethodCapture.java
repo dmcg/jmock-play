@@ -20,7 +20,6 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
         currentBuilder.setCardinality(cardinality);
     }
 
-
     protected void addParameterMatcher(ParametersMatcher parametersMatcher) {
         currentBuilder.addParameterMatcher(parametersMatcher);
     }
