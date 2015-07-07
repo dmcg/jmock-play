@@ -7,6 +7,7 @@ import org.jmock.api.ExpectationError;
 import org.jmock.function.Expec8ions;
 import org.jmock.function.Func1;
 import org.jmock.function.Proc1;
+import org.jmock.function.Proc2;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ExpectationBuilder;
 import org.jmock.internal.ExpectationCollector;
@@ -50,40 +51,38 @@ public class Java8Test {
 
     @Test
     public void doesnt_match_non_matching_parameters() {
-        // JUnitRuleMockery will fail in tearDown
-        Mockery localMockery = new Mockery();
-        Service localService = localMockery.mock(Service.class);
-        localMockery.checking(new Expec8ions() {{
-            allowing(callTo(localService)::stringify).with(42).will(() -> "42");
-        }});
-        try {
-            localService.stringify(54);
-            fail();
-        } catch (ExpectationError e) {
-            assertThat(e.toString(), containsString("54"));
-        }
+        withLocalMockery((localMockery, localService) -> {
+            localMockery.checking(new Expec8ions() {{
+                allowing(callTo(localService)::stringify).with(42).will(() -> "42");
+            }});
+            try {
+                localService.stringify(54);
+                fail();
+            } catch (ExpectationError e) {
+                assertThat(e.toString(), containsString("54"));
+            }
+        });
     }
 
     @Test
     public void doesnt_match_non_matching_method() {
-        // JUnitRuleMockery will fail in tearDown
-        Mockery localMockery = new Mockery();
-        Service localService = localMockery.mock(Service.class);
-        localMockery.checking(new Expec8ions() {{
-            allowing(callTo(localService)::stringify2).with(42).will(() -> "42");
-        }});
-        try {
-            localService.stringify(54);
-            fail();
-        } catch (ExpectationError e) {
-            assertThat(e.toString(), containsString("54"));
-        }
-        try {
-            localMockery.assertIsSatisfied();
-            fail();
-        } catch (ExpectationError e) {
-            assertThat(e.toString(), containsString("42"));
-        }
+        withLocalMockery((localMockery, localService) -> {
+            localMockery.checking(new Expec8ions() {{
+                allowing(callTo(localService)::stringify2).with(42).will(() -> "42");
+            }});
+            try {
+                localService.stringify(54);
+                fail();
+            } catch (ExpectationError e) {
+                assertThat(e.toString(), containsString("54"));
+            }
+            try {
+                localMockery.assertIsSatisfied();
+                fail();
+            } catch (ExpectationError e) {
+                assertThat(e.toString(), containsString("42"));
+            }
+        });
     }
 
     @Test
@@ -96,21 +95,19 @@ public class Java8Test {
 
     @Test
     public void respects_parameters_matcher() {
-        // JUnitRuleMockery will fail in tearDown
-        Mockery localMockery = new Mockery();
-        Service localService = localMockery.mock(Service.class);
+        withLocalMockery((localMockery, localService) -> {
+            localMockery.checking(new Expec8ions() {{
+                allowing(callTo(localService)::stringify).withMatching(greaterThan(42)).will(String::valueOf);
+            }});
+            assertEquals("54", localService.stringify(54));
 
-        localMockery.checking(new Expec8ions() {{
-            allowing(callTo(localService)::stringify).withMatching(greaterThan(42)).will(String::valueOf);
-        }});
-        assertEquals("54", localService.stringify(54));
-
-        try {
-            localService.stringify(42);
-            fail();
-        } catch (ExpectationError e) {
-            assertThat(e.toString(), containsString("42"));
-        }
+            try {
+                localService.stringify(42);
+                fail();
+            } catch (ExpectationError e) {
+                assertThat(e.toString(), containsString("42"));
+            }
+        });
     }
 
     @Test
@@ -234,6 +231,23 @@ public class Java8Test {
         assertEquals("prefix-suffix", service.concat("prefix", "suffix"));
     }
 
+    @Test
+    public void cardinality_works() {
+        withLocalMockery((localMockery, localService) -> {
+            localMockery.checking(new Expec8ions() {{
+                once(callTo(localService)::stringify).withMatching(anyParameters()).will(String::valueOf);
+            }});
+            assertEquals("42", localService.stringify(42));
+
+            try {
+                localService.stringify(42);
+                fail();
+            } catch (ExpectationError e) {
+                assertThat(e.toString(), containsString("42"));
+            }
+        });
+    }
+
     private ParametersMatcher anyParameters() {
         return new AnyParametersMatcher();
     }
@@ -246,6 +260,13 @@ public class Java8Test {
         public boolean isCompatibleWith(Object[] parameters) {
             return true;
         }
+    }
+
+    /** prevents mockery field from reporting in tearDown */
+    private static void withLocalMockery(Proc2<Mockery, Service, RuntimeException> f) {
+        Mockery localMockery = new Mockery();
+        Service localService = localMockery.mock(Service.class);
+        f.call(localMockery, localService);
     }
 
 }

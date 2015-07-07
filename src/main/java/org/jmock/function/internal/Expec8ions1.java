@@ -12,12 +12,20 @@ public class Expec8ions1 extends Expec8ions0 {
         return given(Cardinality.ALLOWING, method);
     }
 
+    public <P1, X extends Exception> Proc1MethodCapture<P1, X> once(Proc1<P1, X> method) {
+        return given(Cardinality.exactly(1), method);
+    }
+
     public <P1, X extends Exception> Proc1MethodCapture<P1, X> given(Cardinality times, Proc1<P1, X> method) {
         return new Proc1MethodCapture<>(method, times, myCopyOfCurrentBuilder);
     }
 
     public <P1, R, X extends Exception> Func1MethodCapture<P1, R, X> allowing(Func1<P1, R, X> method) {
         return given(Cardinality.ALLOWING, method);
+    }
+
+    public <P1, R, X extends Exception> Func1MethodCapture<P1, R, X> once(Func1<P1, R, X> method) {
+        return given(Cardinality.exactly(1), method);
     }
 
     public <P1, R, X extends Exception> Func1MethodCapture<P1, R, X> given(Cardinality times, Func1<P1, R, X> method) {
