@@ -13,9 +13,12 @@ import java.util.List;
 
 public class BaseExpec8ions extends Expectations {
 
-    protected InvocationExpectationBuilder myCopyOfCurrentBuilder = null;
+    protected InvocationExpectationBuilder currentBuilder = null;
 
-
+    public <T> T callTo(T mock) {
+        currentBuilder = (InvocationExpectationBuilder) exactly(1); // cardinality will be changed later, but this gives us access to currentBuilder
+        return currentBuilder.of(mock);
+    }
 
     public void buildExpectations(Action defaultAction, ExpectationCollector collector) {
         for (InvocationExpectationBuilder builder : builders()) {
