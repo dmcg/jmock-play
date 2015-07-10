@@ -1,22 +1,15 @@
 package org.jmock;
 
 import org.hamcrest.Matchers;
-import org.hamcrest.core.IsAnything;
-import org.jmock.api.Action;
 import org.jmock.api.ExpectationError;
 import org.jmock.function.Expec8ions;
 import org.jmock.function.Func1;
-import org.jmock.function.Proc1;
 import org.jmock.function.Proc2;
 import org.jmock.integration.junit4.JUnitRuleMockery;
-import org.jmock.internal.ExpectationBuilder;
-import org.jmock.internal.ExpectationCollector;
-import org.jmock.internal.ParametersMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -222,7 +215,7 @@ public class Java8Test {
     }
 
     @Test
-    public void lambda_for_expectations_is_a_bit_long_winded() {
+    public void lambda_for_expectations_is_a_bit() {
         mockery.checking(Expec8ions.of(e -> {
             e.allowing(e.callTo(service)::stringify).withMatching(e.anyParameters()).will(String::valueOf);
         }));
