@@ -23,14 +23,14 @@ public class Func0MethodCapture<R, X extends Exception> extends BaseMethodCaptur
         function.apply();
     }
 
-    protected Func0Will<R, X> createWill(InvocationExpectationBuilder builder) {
-        return new Func0Will<>(builder);
+    protected Func0Will<R, X> createWill() {
+        return new Func0Will<>(this);
     }
 
     public static class Func0Will<R, X extends Exception> extends BaseWill {
 
-        protected Func0Will(InvocationExpectationBuilder currentBuilder) {
-            super(currentBuilder);
+        protected Func0Will(BaseMethodCapture<?> methodCapture) {
+            super(methodCapture);
         }
 
         public void will(Func0<R, X> function) {

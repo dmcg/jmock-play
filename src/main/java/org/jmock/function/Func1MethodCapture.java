@@ -29,14 +29,14 @@ public class Func1MethodCapture<P1, R, X extends Exception> extends BaseMethodCa
         return withParameterPredicates(p1);
     }
 
-    protected Func1Will<P1, R, X> createWill(InvocationExpectationBuilder builder) {
-        return new Func1Will<>(builder);
+    protected Func1Will<P1, R, X> createWill() {
+        return new Func1Will<>(this);
     }
 
     public static class Func1Will<P1, R, X extends Exception> extends BaseWill {
 
-        protected Func1Will(InvocationExpectationBuilder currentBuilder) {
-            super(currentBuilder);
+        protected Func1Will(BaseMethodCapture<?> methodCapture) {
+            super(methodCapture);
         }
 
         public void will(Func0<R, X> supplier) {

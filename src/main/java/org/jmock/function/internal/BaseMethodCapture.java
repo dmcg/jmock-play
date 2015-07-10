@@ -1,6 +1,7 @@
 package org.jmock.function.internal;
 
 import org.hamcrest.Matcher;
+import org.jmock.api.Action;
 import org.jmock.function.PredicateMatcher;
 import org.jmock.internal.Cardinality;
 import org.jmock.internal.InvocationExpectationBuilder;
@@ -14,9 +15,13 @@ import java.util.stream.Stream;
 public abstract class BaseMethodCapture<W extends BaseWill> {
 
     private final InvocationExpectationBuilder expectationBuilder;
+    private final Cardinality cardinality;
+    private ParametersMatcher parametersMatcher;
+    private Action action;
 
     public BaseMethodCapture(InvocationExpectationBuilder expectationBuilder, Cardinality cardinality) {
         this.expectationBuilder = expectationBuilder;
+        this.cardinality = cardinality;
         expectationBuilder.setCardinality(cardinality);
         try {
             invokeCapturedWithDummyParameters();
@@ -26,13 +31,14 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
 
     protected abstract void invokeCapturedWithDummyParameters() throws Exception;
 
-    protected void addParameterMatcher(ParametersMatcher parametersMatcher) {
+    protected void setParameterMatcher(ParametersMatcher parametersMatcher) {
+        this.parametersMatcher = parametersMatcher;
         expectationBuilder.addParameterMatcher(parametersMatcher);
     }
 
     public W withMatching(ParametersMatcher parametersMatcher) {
-        addParameterMatcher(parametersMatcher);
-        return createWill(expectationBuilder);
+        setParameterMatcher(parametersMatcher);
+        return createWill();
     }
 
     protected W withParameterValues(Object... values) {
@@ -49,6 +55,10 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
         return withParameterMatchers(predicateMatcherStream.toArray(PredicateMatcher[]::new));
     }
 
-    protected abstract W createWill(InvocationExpectationBuilder builder);
+    protected abstract W createWill();
 
+    protected void setAction(Action action) {
+        this.action = action;
+        expectationBuilder.setAction(action);
+    }
 }

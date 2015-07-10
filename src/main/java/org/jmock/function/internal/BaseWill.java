@@ -1,17 +1,16 @@
 package org.jmock.function.internal;
 
 import org.jmock.api.Action;
-import org.jmock.internal.InvocationExpectationBuilder;
 
 public class BaseWill {
 
-    private final InvocationExpectationBuilder currentBuilder;
+    private final BaseMethodCapture<?> methodCapture;
 
-    protected BaseWill(InvocationExpectationBuilder currentBuilder) {
-        this.currentBuilder = currentBuilder;
+    protected BaseWill(BaseMethodCapture<?> methodCapture) {
+        this.methodCapture = methodCapture;
     }
 
     public void will(Action action) {
-        currentBuilder.setAction(action);
+        methodCapture.setAction(action);
     }
 }

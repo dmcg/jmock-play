@@ -23,14 +23,14 @@ public class Proc0MethodCapture<X extends Exception> extends BaseMethodCapture<P
         function.call();
     }
 
-    protected Proc0Will<X> createWill(InvocationExpectationBuilder builder) {
-        return new Proc0Will<>(builder);
+    protected Proc0Will<X> createWill() {
+        return new Proc0Will<>(this);
     }
 
     public static class Proc0Will<X extends Exception> extends BaseWill {
 
-        protected Proc0Will(InvocationExpectationBuilder currentBuilder) {
-            super(currentBuilder);
+        protected Proc0Will(BaseMethodCapture<?> methodCapture) {
+            super(methodCapture);
         }
 
         public void will(Proc0<X> callable) {
