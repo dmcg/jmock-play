@@ -15,10 +15,10 @@ import java.util.List;
 public class BaseExpec8ions extends Expectations {
 
     public <T> T callTo(T mock) {
-        // the currentBuilder captures the method called using the returned mock when the appropriate MethodCapture invokes
+        return exactly(1).of(mock);
+        // Cardinality will be changed later, but this initialises currentBuilder and wraps mock in a capturing thing
+        // The currentBuilder captures the method called using the returned mock when the appropriate MethodCapture invokes
         // it with dummy args
-        exactly(1); // cardinality will be changed later, but this gives us access to currentBuilder
-        return currentBuilder().of(mock);
     }
 
 
