@@ -2,8 +2,10 @@ package org.jmock.function.internal;
 
 import org.hamcrest.Matcher;
 import org.jmock.api.Action;
+import org.jmock.api.Expectation;
 import org.jmock.function.PredicateMatcher;
 import org.jmock.internal.Cardinality;
+import org.jmock.internal.InvocationExpectation;
 import org.jmock.internal.InvocationExpectationBuilder;
 import org.jmock.internal.ParametersMatcher;
 import org.jmock.internal.matcher.AllParametersMatcher;
@@ -22,11 +24,6 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
     public BaseMethodCapture(InvocationExpectationBuilder expectationBuilder, Cardinality cardinality) {
         this.expectationBuilder = expectationBuilder;
         this.cardinality = cardinality;
-        expectationBuilder.setCardinality(cardinality);
-        try {
-            invokeCapturedWithDummyParameters();
-        } catch (Exception ignored) {
-        }
     }
 
     protected abstract void invokeCapturedWithDummyParameters() throws Exception;
@@ -59,6 +56,23 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
 
     protected void setAction(Action action) {
         this.action = action;
-        expectationBuilder.setAction(action);
+    }
+
+    public Expectation toExpectation(Action defaultAction) {
+        captureMethodInvoked();
+        InvocationExpectation result = (InvocationExpectation) expectationBuilder.toExpectation(defaultAction);
+        result.setCardinality(cardinality);
+        if (action != null)
+            result.setAction(action);
+        if (parametersMatcher != null)
+            result.setParametersMatcher(parametersMatcher);
+        return result;
+    }
+
+    private void captureMethodInvoked() {
+        try {
+            invokeCapturedWithDummyParameters();
+        } catch (Exception ignored) {
+        }
     }
 }

@@ -1,17 +1,15 @@
 package org.jmock.function.internal;
 
-import org.hamcrest.Matcher;
 import org.hamcrest.core.IsAnything;
 import org.jmock.api.Action;
 import org.jmock.internal.*;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BaseExpec8ions implements ExpectationBuilder {
 
-    private final List<InvocationExpectationBuilder> builders = new ArrayList<>();
+    private final List<BaseMethodCapture<?>> captures = new ArrayList<>();
     private InvocationExpectationBuilder currentBuilder;
 
     public <T> T callTo(T mock) {
@@ -22,10 +20,14 @@ public class BaseExpec8ions implements ExpectationBuilder {
         // it with dummy args
     }
 
+    protected <T extends BaseMethodCapture<?>> T remember(T capture) {
+        captures.add(capture);
+        return capture;
+    }
+
     private void initialiseExpectationCapture(Cardinality cardinality) {
         currentBuilder = new InvocationExpectationBuilder();
         currentBuilder.setCardinality(cardinality);
-        builders.add(currentBuilder);
     }
 
     public InvocationExpectationBuilder currentBuilder() {
@@ -37,12 +39,8 @@ public class BaseExpec8ions implements ExpectationBuilder {
     }
 
     public void buildExpectations(Action defaultAction, ExpectationCollector collector) {
-        for (InvocationExpectationBuilder builder : builders) {
-            List<Matcher<?>> capturedParameterMatchers = capturedParameterMatchersFrom(builder);
-            if (!capturedParameterMatchers.isEmpty()) {
-                ((InvocationExpectation) builder.toExpectation(defaultAction)).setParametersMatcher((ParametersMatcher) capturedParameterMatchers.get(0));
-            }
-            collector.add(builder.toExpectation(defaultAction));
+        for (BaseMethodCapture<?> capture : captures) {
+            collector.add(capture.toExpectation(defaultAction));
         }
     }
 
@@ -54,32 +52,5 @@ public class BaseExpec8ions implements ExpectationBuilder {
         public boolean isCompatibleWith(Object[] parameters) {
             return true;
         }
-    }
-
-    /* HERE BE DRAGONS */
-
-    private static <T> T valueOfField(Object o, String name, Class<T> fieldType) {
-        return valueOfField(o.getClass(), o, name, fieldType);
-    }
-
-    @SuppressWarnings({"unchecked", "UnusedParameters"})
-    private static <T> T valueOfField(Class<?> type, Object o, String name, Class<T> fieldType) {
-        try {
-            Field declaredField = type.getDeclaredField(name);
-            declaredField.setAccessible(true);
-            return (T) declaredField.get(o);
-        } catch (NoSuchFieldException e) {
-            Class<?> superclass = type.getSuperclass();
-            if (superclass == null)
-                throw new RuntimeException("Can't find field named " + name);
-            return valueOfField(superclass, o, name, fieldType);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Matcher<?>> capturedParameterMatchersFrom(InvocationExpectationBuilder builder) {
-        return BaseExpec8ions.valueOfField(builder, "capturedParameterMatchers", List.class);
     }
 }

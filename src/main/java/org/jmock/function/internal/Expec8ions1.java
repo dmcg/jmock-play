@@ -17,7 +17,7 @@ public class Expec8ions1 extends Expec8ions0 {
     }
 
     public <P1, X extends Exception> Proc1MethodCapture<P1, X> given(Cardinality times, Proc1<P1, X> method) {
-        return new Proc1MethodCapture<>(method, times, currentBuilder());
+        return remember(new Proc1MethodCapture<>(method, times, currentBuilder()));
     }
 
     public <P1, R, X extends Exception> Func1MethodCapture<P1, R, X> allowing(Func1<P1, R, X> method) {
@@ -29,7 +29,7 @@ public class Expec8ions1 extends Expec8ions0 {
     }
 
     public <P1, R, X extends Exception> Func1MethodCapture<P1, R, X> given(Cardinality times, Func1<P1, R, X> method) {
-        return new Func1MethodCapture<>(method, times, currentBuilder());
+        return remember(new Func1MethodCapture<>(method, times, currentBuilder()));
     }
 
 }
