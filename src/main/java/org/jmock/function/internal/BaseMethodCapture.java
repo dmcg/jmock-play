@@ -13,20 +13,26 @@ import java.util.stream.Stream;
 
 public abstract class BaseMethodCapture<W extends BaseWill> {
 
-    private final InvocationExpectationBuilder currentBuilder;
+    private final InvocationExpectationBuilder expectationBuilder;
 
-    public BaseMethodCapture(InvocationExpectationBuilder currentBuilder, Cardinality cardinality) {
-        this.currentBuilder = currentBuilder;
-        currentBuilder.setCardinality(cardinality);
+    public BaseMethodCapture(InvocationExpectationBuilder expectationBuilder, Cardinality cardinality) {
+        this.expectationBuilder = expectationBuilder;
+        expectationBuilder.setCardinality(cardinality);
+        try {
+            invokeCapturedWithDummyParameters();
+        } catch (Exception ignored) {
+        }
     }
 
+    protected abstract void invokeCapturedWithDummyParameters() throws Exception;
+
     protected void addParameterMatcher(ParametersMatcher parametersMatcher) {
-        currentBuilder.addParameterMatcher(parametersMatcher);
+        expectationBuilder.addParameterMatcher(parametersMatcher);
     }
 
     public W withMatching(ParametersMatcher parametersMatcher) {
         addParameterMatcher(parametersMatcher);
-        return createWill(currentBuilder);
+        return createWill(expectationBuilder);
     }
 
     protected W withParameterValues(Object... values) {
@@ -44,4 +50,5 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
     }
 
     protected abstract W createWill(InvocationExpectationBuilder builder);
+
 }

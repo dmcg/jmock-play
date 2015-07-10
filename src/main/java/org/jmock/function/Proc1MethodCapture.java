@@ -10,12 +10,11 @@ import java.util.function.Predicate;
 
 public class Proc1MethodCapture<P1, X extends Exception> extends BaseMethodCapture<Proc1MethodCapture.Proc1Will<P1, X>> {
 
+    private final Proc1<P1, X> proc;
+
     public Proc1MethodCapture(Proc1<P1, X> proc, Cardinality cardinality, InvocationExpectationBuilder currentBuilder) {
         super(currentBuilder, cardinality);
-        try {
-            proc.call(null); // captured by currentBuilder
-        } catch (Throwable ignored) {
-        }
+        this.proc = proc;
     }
 
     public Proc1Will<P1, X> with(P1 p1) {
@@ -28,6 +27,11 @@ public class Proc1MethodCapture<P1, X extends Exception> extends BaseMethodCaptu
 
     public Proc1Will<P1, X> withMatching(Predicate<P1> p1) {
         return withParameterPredicates(p1);
+    }
+
+    @Override
+    protected void invokeCapturedWithDummyParameters() throws Exception {
+        proc.call(null);
     }
 
     protected Proc1Will<P1, X> createWill(InvocationExpectationBuilder builder) {

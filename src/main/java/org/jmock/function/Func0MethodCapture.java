@@ -7,16 +7,20 @@ import org.jmock.internal.InvocationExpectationBuilder;
 
 public class Func0MethodCapture<R, X extends Exception> extends BaseMethodCapture<Func0MethodCapture.Func0Will<R, X>> {
 
+    private final Func0<R, X> function;
+
     public Func0MethodCapture(Func0<R, X> function, Cardinality cardinality, InvocationExpectationBuilder currentBuilder) {
         super(currentBuilder, cardinality);
-        try {
-            function.apply(); // captured by currentBuilder
-        } catch (Throwable ignored) {
-        }
+        this.function = function;
     }
 
     public Func0Will<R, X> with() {
         return withParameterValues();
+    }
+
+    @Override
+    protected void invokeCapturedWithDummyParameters() throws X {
+        function.apply();
     }
 
     protected Func0Will<R, X> createWill(InvocationExpectationBuilder builder) {

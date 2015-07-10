@@ -10,12 +10,11 @@ import java.util.function.Predicate;
 
 public class Func1MethodCapture<P1, R, X extends Exception> extends BaseMethodCapture<Func1MethodCapture.Func1Will<P1, R, X>> {
 
-    public Func1MethodCapture(Func1<P1, R, X> function, Cardinality cardinality, InvocationExpectationBuilder currentBuilder) {
-        super(currentBuilder, cardinality);
-        try {
-            function.apply(null); // captured by currentBuilder
-        } catch (Throwable ignored) {
-        }
+    private final Func1<P1, R, X> function;
+
+    public Func1MethodCapture(Func1<P1, R, X> function, Cardinality cardinality, InvocationExpectationBuilder expectationBuilder) {
+        super(expectationBuilder, cardinality);
+        this.function = function;
     }
 
     public Func1Will<P1, R, X> with(P1 p1) {
@@ -47,5 +46,9 @@ public class Func1MethodCapture<P1, R, X extends Exception> extends BaseMethodCa
         public void will(Func1<P1, R, X> f) {
             will(f.asAction());
         }
+    }
+
+    public void invokeCapturedWithDummyParameters() throws Exception {
+        function.apply(null); // captured by expectationBuilder
     }
 }
