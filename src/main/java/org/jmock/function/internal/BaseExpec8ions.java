@@ -1,6 +1,7 @@
 package org.jmock.function.internal;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.core.IsAnything;
 import org.jmock.Expectations;
 import org.jmock.api.Action;
 import org.jmock.internal.ExpectationCollector;
@@ -20,6 +21,11 @@ public class BaseExpec8ions extends Expectations {
         return currentBuilder().of(mock);
     }
 
+
+    public ParametersMatcher anyParameters() {
+        return new AnyParametersMatcher();
+    }
+
     public void buildExpectations(Action defaultAction, ExpectationCollector collector) {
         for (InvocationExpectationBuilder builder : builders()) {
             List<Matcher<?>> capturedParameterMatchers = capturedParameterMatchersFrom(builder);
@@ -28,6 +34,17 @@ public class BaseExpec8ions extends Expectations {
             }
         }
         super.buildExpectations(defaultAction, collector);
+    }
+
+
+    private static class AnyParametersMatcher extends IsAnything<Object[]> implements ParametersMatcher {
+        public AnyParametersMatcher() {
+            super("(<any parameters>)");
+        }
+
+        public boolean isCompatibleWith(Object[] parameters) {
+            return true;
+        }
     }
 
     /* HERE BE DRAGONS */

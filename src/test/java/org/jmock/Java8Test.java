@@ -222,9 +222,9 @@ public class Java8Test {
     }
 
     @Test
-    public void lambda_for_expectations() {
+    public void lambda_for_expectations_is_a_bit_long_winded() {
         mockery.checking(Expec8ions.of(e -> {
-            e.allowing(e.callTo(service)::stringify).withMatching(anyParameters()).will(String::valueOf);
+            e.allowing(e.callTo(service)::stringify).withMatching(e.anyParameters()).will(String::valueOf);
         }));
 
         assertEquals("42", service.stringify(42));
@@ -254,20 +254,6 @@ public class Java8Test {
                 assertThat(e.toString(), containsString("42"));
             }
         });
-    }
-
-    private ParametersMatcher anyParameters() {
-        return new AnyParametersMatcher();
-    }
-
-    private static class AnyParametersMatcher extends IsAnything<Object[]> implements ParametersMatcher {
-        public AnyParametersMatcher() {
-            super("(<any parameters>)");
-        }
-
-        public boolean isCompatibleWith(Object[] parameters) {
-            return true;
-        }
     }
 
     /** prevents mockery field from reporting in tearDown */
