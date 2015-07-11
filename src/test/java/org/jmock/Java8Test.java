@@ -13,6 +13,7 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.jmock.function.internal.BaseExpec8ions.anyParameters;
 import static org.junit.Assert.*;
 
 public class Java8Test {
@@ -39,6 +40,17 @@ public class Java8Test {
         mockery.checking(new Expec8ions() {{
             allowing(callTo(service)::stringify).with(42).will(() -> "42");
         }});
+        assertEquals("42", service.stringify(42));
+    }
+
+    @Test
+    public void matches_the_correct_mock() {
+        Service service2 = mockery.mock(Service.class, "service2");
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::stringify).with(42).will(() -> "42");
+            allowing(callTo(service2)::stringify).with(42).will(() -> "422");
+        }});
+        assertEquals("422", service2.stringify(42));
         assertEquals("42", service.stringify(42));
     }
 
@@ -217,7 +229,7 @@ public class Java8Test {
     @Test
     public void lambda_for_expectations_is_a_bit() {
         mockery.checking(Expec8ions.of(e -> {
-            e.allowing(e.callTo(service)::stringify).withMatching(e.anyParameters()).will(String::valueOf);
+            e.allowing(e.callTo(service)::stringify).withMatching(anyParameters()).will(String::valueOf);
         }));
 
         assertEquals("42", service.stringify(42));

@@ -34,7 +34,7 @@ public class BaseExpec8ions implements ExpectationBuilder {
         return currentBuilder;
     }
 
-    public ParametersMatcher anyParameters() {
+    public static ParametersMatcher anyParameters() {
         return new AnyParametersMatcher();
     }
 
