@@ -30,7 +30,6 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
 
     protected void setParameterMatcher(ParametersMatcher parametersMatcher) {
         this.parametersMatcher = parametersMatcher;
-        expectationBuilder.addParameterMatcher(parametersMatcher);
     }
 
     public W withMatching(ParametersMatcher parametersMatcher) {
