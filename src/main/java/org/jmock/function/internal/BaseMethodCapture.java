@@ -56,8 +56,12 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
     }
 
     public Expectation toExpectation(Action defaultAction) {
+        return toExpectation(expectationBuilder, defaultAction);
+    }
+
+    public Expectation toExpectation(InvocationExpectationBuilder anExpectationBuilder, Action defaultAction) {
         captureMethodInvoked();
-        InvocationExpectation result = (InvocationExpectation) expectationBuilder.toExpectation(defaultAction);
+        InvocationExpectation result = (InvocationExpectation) anExpectationBuilder.toExpectation(defaultAction);
         result.setCardinality(cardinality);
         if (action != null)
             result.setAction(action);
