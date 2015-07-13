@@ -74,7 +74,6 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
         try {
             invokeCapturedWithDummyParameters();
         } catch (Exception bad) {
-            bad.printStackTrace();
             throw new RuntimeException(bad);
         }
     }

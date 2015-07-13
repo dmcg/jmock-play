@@ -27,7 +27,7 @@ import java.util.Set;
  * @author named by Ivan Moore.
  */
 public class Mockery implements SelfDescribing {
-    private Imposteriser imposteriser = JavaReflectionImposteriser.INSTANCE;
+    protected Imposteriser imposteriser = JavaReflectionImposteriser.INSTANCE;
     private ExpectationErrorTranslator expectationErrorTranslator = IdentityExpectationErrorTranslator.INSTANCE;
     private MockObjectNamingScheme namingScheme = CamelCaseNamingScheme.INSTANCE;
     private ThreadingPolicy threadingPolicy = new SingleThreadedPolicy();

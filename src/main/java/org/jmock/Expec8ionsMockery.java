@@ -8,6 +8,7 @@ import org.jmock.function.internal.BaseMethodCapture;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ExpectationCollector;
 import org.jmock.internal.InvocationExpectationBuilder;
+import org.jmock.internal.ReturnDefaultValueAction;
 
 public class Expec8ionsMockery extends JUnitRuleMockery {
 
@@ -29,7 +30,7 @@ public class Expec8ionsMockery extends JUnitRuleMockery {
             return super.dispatch(invocation);
         else {
             currentExpectations.capture(invocation);
-            return null;
+            return new ReturnDefaultValueAction(imposteriser).invoke(invocation);
         }
     }
 
