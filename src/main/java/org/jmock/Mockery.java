@@ -27,7 +27,7 @@ import java.util.Set;
  * @author named by Ivan Moore.
  */
 public class Mockery implements SelfDescribing {
-    protected Imposteriser imposteriser = JavaReflectionImposteriser.INSTANCE;
+    private Imposteriser imposteriser = JavaReflectionImposteriser.INSTANCE;
     private ExpectationErrorTranslator expectationErrorTranslator = IdentityExpectationErrorTranslator.INSTANCE;
     private MockObjectNamingScheme namingScheme = CamelCaseNamingScheme.INSTANCE;
     private ThreadingPolicy threadingPolicy = new SingleThreadedPolicy();
@@ -235,7 +235,7 @@ public class Mockery implements SelfDescribing {
         }
     }
 
-    protected Object dispatch(Invocation invocation) throws Throwable {
+    private Object dispatch(Invocation invocation) throws Throwable {
         if (firstError != null) {
             throw firstError;
         }
@@ -281,7 +281,7 @@ public class Mockery implements SelfDescribing {
         }
 
         public Object invoke(Invocation invocation) throws Throwable {
-            return dispatch(invocation);
+            return interceptedDispatch(invocation);
         }
 
         public Object captureExpectationTo(ExpectationCapture capture) {
@@ -289,6 +289,31 @@ public class Mockery implements SelfDescribing {
                     new ObjectMethodExpectationBouncer(new InvocationToExpectationTranslator(capture, defaultAction)),
                     mockedType);
         }
+    }
+
+    private Object interceptedDispatch(Invocation invocation) throws Throwable {
+        return interceptor.handle(invocation, interceptorEndPoint);
+    }
+
+    public interface InvocationInterceptor {
+        public Object handle(Invocation invocation, InvocationInterceptor next) throws Throwable;
+    }
+
+    private final InvocationInterceptor interceptorEndPoint = new InvocationInterceptor() {
+        @Override
+        public Object handle(Invocation invocation, InvocationInterceptor next) throws Throwable {
+            return dispatch(invocation);
+        }
+    };
+
+    private InvocationInterceptor interceptor = interceptorEndPoint;
+
+    public void setInterceptor(InvocationInterceptor interceptor) {
+        this.interceptor = interceptor != null ? interceptor : interceptorEndPoint;
+    }
+
+    public Imposteriser imposteriser() {
+        return imposteriser;
     }
 
 }

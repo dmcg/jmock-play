@@ -1,31 +1,21 @@
 package org.jmock;
 
-import org.jmock.api.Invocation;
 import org.jmock.function.Expec8ions;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ReturnDefaultValueAction;
 
 public class Expec8ionsMockery extends JUnitRuleMockery {
 
-    private Expec8ions currentExpectations = null;
-
     public void checking(Expec8ions expectations) {
         try {
-            currentExpectations = expectations;
-            super.checking(currentExpectations);
+            ReturnDefaultValueAction returnDefaultValueAction = new ReturnDefaultValueAction(imposteriser());
+            setInterceptor((invocation, next) -> {
+                expectations.capture(invocation);
+                return returnDefaultValueAction.invoke(invocation);
+            });
+            super.checking(expectations);
         } finally {
-            currentExpectations = null;
+            setInterceptor(null);
         }
     }
-
-    @Override
-    protected Object dispatch(Invocation invocation) throws Throwable {
-        if (currentExpectations == null)
-            return super.dispatch(invocation);
-        else {
-            currentExpectations.capture(invocation);
-            return new ReturnDefaultValueAction(imposteriser).invoke(invocation);
-        }
-    }
-
 }
