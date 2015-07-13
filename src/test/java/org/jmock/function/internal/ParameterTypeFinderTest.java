@@ -1,4 +1,4 @@
-package org.jmock;
+package org.jmock.function.internal;
 
 import org.hamcrest.Matchers;
 import org.jmock.function.Func1;

@@ -1,6 +1,5 @@
-package org.jmock;
+package org.jmock.function;
 
-import org.jmock.function.Expec8ions;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.jmock.internal.ReturnDefaultValueAction;
 
