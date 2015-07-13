@@ -3,12 +3,15 @@ package org.jmock.function;
 import org.hamcrest.Matcher;
 import org.jmock.function.internal.BaseMethodCapture;
 import org.jmock.function.internal.BaseWill;
+import org.jmock.function.internal.ParameterTypeFinder;
 import org.jmock.internal.Cardinality;
 import org.jmock.internal.InvocationExpectationBuilder;
 
 import java.util.function.Predicate;
 
 public class Proc1MethodCapture<P1, X extends Exception> extends BaseMethodCapture<Proc1MethodCapture.Proc1Will<P1, X>> {
+
+    private static final int ARITY = 1;
 
     private final Proc1<P1, X> proc;
 
@@ -30,8 +33,9 @@ public class Proc1MethodCapture<P1, X extends Exception> extends BaseMethodCaptu
     }
 
     @Override
-    protected void invokeCapturedWithDummyParameters() throws Exception {
-        proc.call(null);
+    protected void invokeCapturedWithDummyParameters() throws X {
+        Class[] parameterTypes = ParameterTypeFinder.findParameterTypes(proc::callWithArgs, ARITY);
+        proc.callWithArgs(ParameterTypeFinder.argsWithClasses(parameterTypes));
     }
 
     protected Proc1Will<P1, X> createWill() {

@@ -26,6 +26,7 @@ public class Java8Test {
     public interface Service {
         String stringify(int o);
         String stringify2(int o);
+        String stringifyLong(long o);
         int write(Object o) throws IOException;
         int overload(int o);
         int overload(float f);
@@ -42,6 +43,14 @@ public class Java8Test {
             allowing(callTo(service)::stringify).with(42).will(() -> "42");
         }});
         assertEquals("42", service.stringify(42));
+    }
+
+    @Test
+    public void long_version() {
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::stringifyLong).with(42L).will(() -> "42");
+        }});
+        assertEquals("42", service.stringifyLong(42));
     }
 
     @Test
@@ -70,7 +79,6 @@ public class Java8Test {
         });
     }
 
-    @Ignore("fails")
     @Test
     public void doesnt_match_non_matching_method() {
         withLocalMockery((localMockery, localService) -> {
@@ -94,6 +102,8 @@ public class Java8Test {
         assertEquals("", service.stringify(42));
     }
 
+    @Ignore("Not implemented")
+    // fails because our probe to find the method called will have arguments, so they are captured as part of the expectation")
     @Test
     public void default_parameters_works() {
         mockery.checking(new Expec8ions() {{
@@ -223,7 +233,7 @@ public class Java8Test {
     }
 
     @Test
-    public void lambda_for_expectations_is_a_bit() {
+    public void lambda_for_expectations() {
         mockery.checking(Expec8ions.of(e -> {
             e.allowing(e.callTo(service)::stringify).withMatching(anyParameters()).will(String::valueOf);
         }));

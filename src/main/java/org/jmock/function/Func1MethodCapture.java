@@ -3,12 +3,15 @@ package org.jmock.function;
 import org.hamcrest.Matcher;
 import org.jmock.function.internal.BaseMethodCapture;
 import org.jmock.function.internal.BaseWill;
+import org.jmock.function.internal.ParameterTypeFinder;
 import org.jmock.internal.Cardinality;
 import org.jmock.internal.InvocationExpectationBuilder;
 
 import java.util.function.Predicate;
 
 public class Func1MethodCapture<P1, R, X extends Exception> extends BaseMethodCapture<Func1MethodCapture.Func1Will<P1, R, X>> {
+
+    private static final int ARITY = 1;
 
     private final Func1<P1, R, X> function;
 
@@ -33,6 +36,12 @@ public class Func1MethodCapture<P1, R, X extends Exception> extends BaseMethodCa
         return new Func1Will<>(this);
     }
 
+    @Override
+    protected void invokeCapturedWithDummyParameters() throws X {
+        Class[] parameterTypes = ParameterTypeFinder.findParameterTypes(function::applyArgs, ARITY);
+        function.applyArgs(ParameterTypeFinder.argsWithClasses(parameterTypes));
+    }
+
     public static class Func1Will<P1, R, X extends Exception> extends BaseWill {
 
         protected Func1Will(BaseMethodCapture<?> methodCapture) {
@@ -48,7 +57,6 @@ public class Func1MethodCapture<P1, R, X extends Exception> extends BaseMethodCa
         }
     }
 
-    public void invokeCapturedWithDummyParameters() throws Exception {
-        function.apply(null); // captured by expectationBuilder
-    }
+
+
 }

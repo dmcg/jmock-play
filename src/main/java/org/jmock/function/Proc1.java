@@ -25,4 +25,10 @@ public interface Proc1<P1, X extends Exception> {
             }
         };
     }
+
+
+    @SuppressWarnings("unchecked")
+    default public void callWithArgs(Object... args) throws X {
+        this.call((P1) args[0]);
+    }
 }

@@ -24,4 +24,9 @@ public interface Func1<P1, R, X extends Exception> {
             }
         };
     }
+
+    @SuppressWarnings("unchecked")
+    default public R applyArgs(Object... args) throws X {
+        return this.apply((P1) args[0]);
+    }
 }

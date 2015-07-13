@@ -18,15 +18,13 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
 
     private final InvocationExpectationBuilder expectationBuilder;
     private final Cardinality cardinality;
-    private ParametersMatcher parametersMatcher;
+    protected ParametersMatcher parametersMatcher;
     private Action action;
 
     public BaseMethodCapture(InvocationExpectationBuilder expectationBuilder, Cardinality cardinality) {
         this.expectationBuilder = expectationBuilder;
         this.cardinality = cardinality;
     }
-
-    protected abstract void invokeCapturedWithDummyParameters() throws Exception;
 
     protected void setParameterMatcher(ParametersMatcher parametersMatcher) {
         this.parametersMatcher = parametersMatcher;
@@ -71,7 +69,11 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
     private void captureMethodInvoked() {
         try {
             invokeCapturedWithDummyParameters();
-        } catch (Exception ignored) {
+        } catch (Exception bad) {
+            bad.printStackTrace();
+            throw new RuntimeException(bad);
         }
     }
+
+    protected abstract void invokeCapturedWithDummyParameters() throws Exception;
 }
