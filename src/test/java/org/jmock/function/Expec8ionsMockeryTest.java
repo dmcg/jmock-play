@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class Expec8ionsMockeryTest {
 
     @Rule
-    public final Expec8ionsMockery mockery = new Expec8ionsMockery();
+    public final JunitRuleExpec8ionsMockery mockery = new JunitRuleExpec8ionsMockery();
 
     private final Service service = mockery.mock(Service.class);
 
@@ -69,7 +69,7 @@ public class Expec8ionsMockeryTest {
             try {
                 localService.stringify(54);
                 fail();
-            } catch (ExpectationError | AssertionError e) {
+            } catch (ExpectationError e) {
                 assertThat(e.toString(), containsString("54"));
             }
         });
@@ -84,7 +84,7 @@ public class Expec8ionsMockeryTest {
             try {
                 localService.stringify2(42);
                 fail();
-            } catch (ExpectationError | AssertionError e) {
+            } catch (ExpectationError e) {
                 assertThat(e.toString(), containsString("42"));
             }
         });
@@ -109,7 +109,7 @@ public class Expec8ionsMockeryTest {
             try {
                 localService.stringify(42);
                 fail();
-            } catch (ExpectationError | AssertionError e) {
+            } catch (ExpectationError e) {
                 assertThat(e.toString(), containsString("42"));
             }
         });
@@ -247,7 +247,7 @@ public class Expec8ionsMockeryTest {
             try {
                 localService.stringify(42);
                 fail();
-            } catch (ExpectationError | AssertionError e) {
+            } catch (ExpectationError e) {
                 assertThat(e.toString(), containsString("42"));
             }
         });

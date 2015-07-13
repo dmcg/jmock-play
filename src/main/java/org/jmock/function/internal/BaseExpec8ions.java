@@ -1,6 +1,7 @@
 package org.jmock.function.internal;
 
 import org.hamcrest.core.IsAnything;
+import org.jmock.Mockery;
 import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 import org.jmock.internal.*;
@@ -41,6 +42,20 @@ public class BaseExpec8ions implements ExpectationBuilder {
 
     public static ParametersMatcher anyParameters() {
         return new AnyParametersMatcher();
+    }
+
+
+    public void buildExpectations(Mockery mockery) {
+        try {
+            ReturnDefaultValueAction returnDefaultValueAction = new ReturnDefaultValueAction(mockery.imposteriser());
+            mockery.setInterceptor((invocation, next) -> {
+                capture(invocation);
+                return returnDefaultValueAction.invoke(invocation);
+            });
+            mockery.checking(this);
+        } finally {
+            mockery.setInterceptor(null);
+        }
     }
 
     @Override

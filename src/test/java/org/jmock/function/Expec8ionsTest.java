@@ -230,9 +230,9 @@ public class Expec8ionsTest {
 
     @Test
     public void two_parameters() {
-        mockery.checking(Expec8ions.of(e -> {
-            e.allowing(e.callTo(service)::concat).withMatching(equalTo("prefix"), anything()).will((p, s) -> p + "-" + s);
-        }));
+        mockery.checking(new Expec8ions() {{
+            allowing(callTo(service)::concat).withMatching(equalTo("prefix"), anything()).will((p, s) -> p + "-" + s);
+        }});
 
         assertEquals("prefix-suffix", service.concat("prefix", "suffix"));
     }
