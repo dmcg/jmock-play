@@ -2,6 +2,7 @@ package org.jmock.function.internal;
 
 import org.hamcrest.core.IsAnything;
 import org.jmock.api.Action;
+import org.jmock.api.Invocation;
 import org.jmock.internal.*;
 
 import java.util.ArrayList;
@@ -42,10 +43,25 @@ public class BaseExpec8ions implements ExpectationBuilder {
         return new AnyParametersMatcher();
     }
 
+    @Override
     public void buildExpectations(Action defaultAction, ExpectationCollector collector) {
-        for (BaseMethodCapture<?> capture : captures) {
-            collector.add(capture.toExpectation(defaultAction));
+        for (BaseMethodCapture<?> capture : captures()) {
+            if (capture.hasBuilder()) {
+                // the case where callTo created the builder
+                collector.add(capture.toExpectation(defaultAction));
+            } else {
+                // no callTo - mockery will call back to us
+                currentBuilder = new InvocationExpectationBuilder();
+                collector.add(capture.toExpectation(currentBuilder, defaultAction));
+                // this causes an invocation on the mock, which is sent to us by the mockery and captured
+                // put into the currentBuilder
+            }
         }
+    }
+
+    public void capture(Invocation invocation) {
+        currentBuilder.of(invocation.getInvokedObject());
+        currentBuilder.createExpectationFrom(invocation);
     }
 
     private static class AnyParametersMatcher extends IsAnything<Object[]> implements ParametersMatcher {

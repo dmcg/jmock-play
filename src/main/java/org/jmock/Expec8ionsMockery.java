@@ -1,24 +1,18 @@
 package org.jmock;
 
-import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 import org.jmock.function.Expec8ions;
-import org.jmock.function.Proc1;
-import org.jmock.function.internal.BaseMethodCapture;
 import org.jmock.integration.junit4.JUnitRuleMockery;
-import org.jmock.internal.ExpectationCollector;
-import org.jmock.internal.InvocationExpectationBuilder;
 import org.jmock.internal.ReturnDefaultValueAction;
 
 public class Expec8ionsMockery extends JUnitRuleMockery {
 
-    private MyExpec8ions currentExpectations = null;
+    private Expec8ions currentExpectations = null;
 
-    public void checking(Proc1<Expec8ions, RuntimeException> expect) {
+    public void checking(Expec8ions expectations) {
         try {
-            currentExpectations = new MyExpec8ions();
-            expect.call(currentExpectations);
-            checking(currentExpectations);
+            currentExpectations = expectations;
+            super.checking(currentExpectations);
         } finally {
             currentExpectations = null;
         }
@@ -34,24 +28,4 @@ public class Expec8ionsMockery extends JUnitRuleMockery {
         }
     }
 
-    private class MyExpec8ions extends Expec8ions {
-
-        private InvocationExpectationBuilder currentBuilder;
-
-        public void capture(Invocation invocation) {
-            currentBuilder.of(invocation.getInvokedObject());
-            currentBuilder.createExpectationFrom(invocation);
-        }
-
-        @Override
-        public void buildExpectations(Action defaultAction, ExpectationCollector collector) {
-            for (BaseMethodCapture<?> capture : captures()) {
-                currentBuilder = new InvocationExpectationBuilder();
-                collector.add(capture.toExpectation(currentBuilder, defaultAction));
-                    // this causes an invocation on the mock, which is sent to us by the mockery and captured
-                    // put into the currentBuilder
-            }
-        }
-
-    }
 }

@@ -16,13 +16,13 @@ import java.util.stream.Stream;
 
 public abstract class BaseMethodCapture<W extends BaseWill> {
 
-    private final InvocationExpectationBuilder expectationBuilder;
+    private final InvocationExpectationBuilder expectationBuilderOrNull;
     private final Cardinality cardinality;
     protected ParametersMatcher parametersMatcher;
     private Action action;
 
-    public BaseMethodCapture(InvocationExpectationBuilder expectationBuilder, Cardinality cardinality) {
-        this.expectationBuilder = expectationBuilder;
+    public BaseMethodCapture(InvocationExpectationBuilder expectationBuilderOrNull, Cardinality cardinality) {
+        this.expectationBuilderOrNull = expectationBuilderOrNull;
         this.cardinality = cardinality;
     }
 
@@ -56,7 +56,11 @@ public abstract class BaseMethodCapture<W extends BaseWill> {
     }
 
     public Expectation toExpectation(Action defaultAction) {
-        return toExpectation(expectationBuilder, defaultAction);
+        return toExpectation(expectationBuilderOrNull, defaultAction);
+    }
+
+    public boolean hasBuilder() {
+        return expectationBuilderOrNull != null;
     }
 
     public Expectation toExpectation(InvocationExpectationBuilder anExpectationBuilder, Action defaultAction) {

@@ -6,7 +6,6 @@ import org.jmock.function.Expec8ions;
 import org.jmock.function.Func1;
 import org.jmock.function.Proc2;
 import org.jmock.integration.junit4.JUnitRuleMockery;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -17,7 +16,7 @@ import static org.hamcrest.Matchers.*;
 import static org.jmock.function.internal.BaseExpec8ions.anyParameters;
 import static org.junit.Assert.*;
 
-public class Java8Test {
+public class Expec8ionsTest {
 
     @Rule public final JUnitRuleMockery mockery = new JUnitRuleMockery();
 
@@ -98,16 +97,6 @@ public class Java8Test {
     public void does_default_action() {
         mockery.checking(new Expec8ions() {{
             allowing(callTo(service)::stringify).with(42);
-        }});
-        assertEquals("", service.stringify(42));
-    }
-
-    @Ignore("Not implemented")
-    // fails because our probe to find the method called will have arguments, so they are captured as part of the expectation")
-    @Test
-    public void default_parameters_works() {
-        mockery.checking(new Expec8ions() {{
-            allowing(callTo(service)::stringify);
         }});
         assertEquals("", service.stringify(42));
     }
