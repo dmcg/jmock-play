@@ -9,7 +9,9 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.jmock.AbstractExpectations.returnValue;
 import static org.jmock.function.internal.BaseExpec8ions.anyParameters;
+import static org.jmock.internal.Cardinality.atLeast;
 import static org.junit.Assert.*;
 
 public class Expec8ionsMockeryTest {
@@ -34,33 +36,75 @@ public class Expec8ionsMockeryTest {
     }
 
     @Test
-    public void matches_matching_parameters() {
+    public void expec8ions_uses_method_reference() {
         mockery.checking(new Expec8ions() {{
-            allowing(service::stringify).with(42).will(() -> "42");
+            once(service::stringify).with(42).will(returnValue("just right"));
+            allowing(service::stringify).with(43).will(returnValue("too big"));
+            given(atLeast(1), service::stringify).with(41).will(returnValue("too small"));
         }});
-        assertEquals("42", service.stringify(42));
-    }
 
-    @Test
-    public void allows_parameter_matcher() {
-        mockery.checking(new Expec8ions() {{
-            allowing(service::stringify).withMatching(greaterThan(42)).will(() -> "too big");
-            allowing(service::stringify).withMatching(lessThan(42)).will(() -> "too small");
-            allowing(service::stringify).withMatching(equalTo(42)).will(() -> "just right");
-        }});
+        assertEquals("too big", service.stringify(43));
         assertEquals("too small", service.stringify(41));
         assertEquals("just right", service.stringify(42));
+    }
+
+
+    @Test
+    public void use_a_lambda_instead_of_subclassing_Expec8ions() {
+        mockery.checking(e -> {
+            e.allowing(service::stringify).with(42).will(returnValue("just right"));
+            e.allowing(service::stringify).with(41).will(returnValue("too small"));
+            e.allowing(service::stringify).with(43).will(returnValue("too big"));
+        });
+
         assertEquals("too big", service.stringify(43));
+        assertEquals("too small", service.stringify(41));
+        assertEquals("just right", service.stringify(42));
     }
 
     @Test
-    public void allows_anyParameters_matcher() {
-        mockery.checking(new Expec8ions() {{
-            allowing(service::stringify).withMatching(anyParameters()).will(String::valueOf);
-        }});
+    public void allows_parameter_matchers() {
+        mockery.checking(e -> {
+            e.allowing(service::stringify).withMatching(greaterThan(42)).will(returnValue("too big"));
+            e.allowing(service::stringify).withMatching(lessThan(42)).will(returnValue("too small"));
+            e.allowing(service::stringify).withMatching(equalTo(42)).will(returnValue("just right"));
+        });
 
-        assertEquals("42", service.stringify(42));
-        assertEquals("54", service.stringify(54));
+        assertEquals("too big", service.stringify(43));
+        assertEquals("too small", service.stringify(41));
+        assertEquals("just right", service.stringify(42));
+    }
+
+    @Test
+    public void allows_predicates_for_parameters_matcher() {
+        mockery.checking(e -> {
+            e.allowing(service::stringify).withMatching(i -> i % 2 == 0).will(returnValue("even"));
+            e.allowing(service::stringify).withMatching(i -> i % 2 != 0).will(returnValue("odd"));
+        });
+
+        assertEquals("even", service.stringify(42));
+        assertEquals("odd", service.stringify(43));
+    }
+
+    @Test
+    public void allows_lambda_for_action() {
+        mockery.checking(e -> {
+            e.allowing(service::stringify).withMatching(i -> i % 2 == 0).will(() -> "even");
+            e.allowing(service::stringify).withMatching(i -> i % 2 != 0).will(() -> "odd");
+        });
+
+        assertEquals("even", service.stringify(42));
+        assertEquals("odd", service.stringify(43));
+    }
+
+    @Test
+    public void passes_parameters_to_lambda_for_action() {
+        mockery.checking(e -> {
+            e.allowing(service::stringify).withMatching(anyParameters()).will((i) -> i % 2 == 0 ? "even" : "odd");
+        });
+
+        assertEquals("even", service.stringify(42));
+        assertEquals("odd", service.stringify(43));
     }
 
     @Test
@@ -127,17 +171,6 @@ public class Expec8ionsMockeryTest {
             allowing(service::stringify).with(42);
         }});
         assertEquals("", service.stringify(42));
-    }
-
-    @Test
-    public void can_use_predicates_for_parameters_matcher() {
-        mockery.checking(new Expec8ions() {{
-            allowing(service::stringify).withMatching(i -> i % 2 == 0).will(() -> "even");
-            allowing(service::stringify).withMatching(i -> i % 2 != 0).will(() -> "odd");
-        }});
-
-        assertEquals("even", service.stringify(42));
-        assertEquals("odd", service.stringify(43));
     }
 
     @Test
@@ -220,15 +253,6 @@ public class Expec8ionsMockeryTest {
 
         service.thing();
         assertTrue(called[0]);
-    }
-
-    @Test
-    public void lambda_for_expectations() {
-        mockery.checking(Expec8ions.of(e -> {
-            e.allowing(service::stringify).withMatching(anyParameters()).will(String::valueOf);
-        }));
-
-        assertEquals("42", service.stringify(42));
     }
 
     @Test
