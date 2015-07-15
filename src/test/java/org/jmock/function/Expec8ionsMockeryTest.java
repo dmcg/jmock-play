@@ -42,6 +42,37 @@ public class Expec8ionsMockeryTest {
     }
 
     @Test
+    public void allows_parameter_matcher() {
+        mockery.checking(new Expec8ions() {{
+            allowing(service::stringify).withMatching(greaterThan(42)).will(() -> "too big");
+            allowing(service::stringify).withMatching(lessThan(42)).will(() -> "too small");
+            allowing(service::stringify).withMatching(equalTo(42)).will(() -> "just right");
+        }});
+        assertEquals("too small", service.stringify(41));
+        assertEquals("just right", service.stringify(42));
+        assertEquals("too big", service.stringify(43));
+    }
+
+    @Test
+    public void allows_anyParameters_matcher() {
+        mockery.checking(new Expec8ions() {{
+            allowing(service::stringify).withMatching(anyParameters()).will(String::valueOf);
+        }});
+
+        assertEquals("42", service.stringify(42));
+        assertEquals("54", service.stringify(54));
+    }
+
+    @Test
+    public void two_parameters() {
+        mockery.checking(new Expec8ions() {{
+            allowing(service::concat).withMatching(equalTo("prefix"), anything()).will((p, s) -> p + "-" + s);
+        }});
+
+        assertEquals("prefix-suffix", service.concat("prefix", "suffix"));
+    }
+
+    @Test
     public void long_version() {
         mockery.checking(new Expec8ions() {{
             allowing(service::stringifyLong).with(42L).will(() -> "42");
@@ -96,33 +127,6 @@ public class Expec8ionsMockeryTest {
             allowing(service::stringify).with(42);
         }});
         assertEquals("", service.stringify(42));
-    }
-
-    @Test
-    public void respects_parameters_matcher() {
-        withLocalMockery((localMockery, localService) -> {
-            localMockery.checking(new Expec8ions() {{
-                allowing(localService::stringify).withMatching(greaterThan(42)).will(String::valueOf);
-            }});
-            assertEquals("54", localService.stringify(54));
-
-            try {
-                localService.stringify(42);
-                fail();
-            } catch (ExpectationError e) {
-                assertThat(e.toString(), containsString("42"));
-            }
-        });
-    }
-
-    @Test
-    public void allows_anyParameters_matcher() {
-        mockery.checking(new Expec8ions() {{
-            allowing(service::stringify).withMatching(anyParameters()).will(String::valueOf);
-        }});
-
-        assertEquals("42", service.stringify(42));
-        assertEquals("54", service.stringify(54));
     }
 
     @Test
@@ -225,15 +229,6 @@ public class Expec8ionsMockeryTest {
         }));
 
         assertEquals("42", service.stringify(42));
-    }
-
-    @Test
-    public void two_parameters() {
-        mockery.checking(new Expec8ions() {{
-            allowing(service::concat).withMatching(equalTo("prefix"), anything()).will((p, s) -> p + "-" + s);
-        }});
-
-        assertEquals("prefix-suffix", service.concat("prefix", "suffix"));
     }
 
     @Test
